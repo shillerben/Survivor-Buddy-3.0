@@ -15,6 +15,8 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)
         self.grid()
+        self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
+        self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.create_widgets()
         
     def create_widgets(self):
