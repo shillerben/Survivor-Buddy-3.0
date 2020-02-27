@@ -9,6 +9,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from ControlButtons import ControlButtons
 from NotificationsFrame import NotificationFrame
+from StatusBar import StatusBar
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -26,8 +27,8 @@ class Application(tk.Frame):
         self.notifications_frame = NotificationFrame(self)
         self.notifications_frame.grid()
         
-        #self.quit_button = ttk.Button(self, text="Quit", command=self.quit)
-        #self.quit_button.grid()
+        self.status_bar = StatusBar(self)
+        self.status_bar.grid()
         
         self.master.config(menu=self.menu_bar)
         
@@ -59,7 +60,8 @@ class Application(tk.Frame):
         root_menu.add_cascade(label="Help", menu=self.help_menu)
 
     def hello(self):
-        print("Hello")
+        print("Hello from Menu")
+        self.notifications_frame.append_line("Hello from Menu")
         
         
 root = tk.Tk()
