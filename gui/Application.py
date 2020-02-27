@@ -8,6 +8,7 @@ Created on Wed Feb 26 08:21:08 2020
 import tkinter as tk
 import tkinter.ttk as ttk
 from ControlButtons import ControlButtons
+from NotificationsFrame import NotificationFrame
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -22,8 +23,11 @@ class Application(tk.Frame):
         self.control_buttons = ControlButtons(self)
         self.control_buttons.grid()
         
-        self.quit_button = ttk.Button(self, text="Quit", command=self.quit)
-        self.quit_button.grid()
+        self.notifications_frame = NotificationFrame(self)
+        self.notifications_frame.grid()
+        
+        #self.quit_button = ttk.Button(self, text="Quit", command=self.quit)
+        #self.quit_button.grid()
         
         self.master.config(menu=self.menu_bar)
         

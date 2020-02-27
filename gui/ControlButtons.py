@@ -59,4 +59,5 @@ class ControlButtons(tk.Frame):
         
     def hello(self):
         print("Hello from ControlButtons")
+        self.master.notifications_frame.append_line("Hello from ControlButtons")
 
