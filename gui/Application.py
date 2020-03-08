@@ -7,30 +7,40 @@ Created on Wed Feb 26 08:21:08 2020
 
 import tkinter as tk
 import tkinter.ttk as ttk
+from PositionFrame import PositionFrame
 from ControlButtons import ControlButtons
 from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
 
 class Application(tk.Frame):
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
-        self.grid()
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        #self.grid(sticky="nsew")
+        self.pack()
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
+        self.config(padx=16, pady=16)
         self.create_widgets()
         
     def create_widgets(self):
         self.menu_bar = tk.Menu(self)
         self.create_menu(self.menu_bar)
         
+        self.position_frame = PositionFrame(self)
+        self.position_frame.pack(fill="x")
+        #self.position_frame.grid(row=0, rowspan=4, columnspan=4, sticky="ew")
+        
         self.control_buttons = ControlButtons(self)
-        self.control_buttons.grid()
+        self.control_buttons.pack(fill="x")
+        #self.control_buttons.grid(row=4, rowspan=2, columnspan=4, sticky="ew")
         
         self.notifications_frame = NotificationFrame(self)
-        self.notifications_frame.grid()
+        self.notifications_frame.pack(fill="x")
+        #self.notifications_frame.grid(row=6, rowspan=4, columnspan=4, sticky="ew")
         
         self.status_bar = StatusBar(self)
-        self.status_bar.grid()
+        self.status_bar.pack(fill="x")
+        #self.status_bar.grid(row=10, rowspan=1, columnspan=4, sticky="ew")
         
         self.master.config(menu=self.menu_bar)
         
@@ -65,9 +75,10 @@ class Application(tk.Frame):
         print("Hello from Menu")
         self.notifications_frame.append_line("Hello from Menu")
         
-        
-root = tk.Tk()
-root.geometry("800x600")
-app = Application(master=root)
-app.master.title("Survivor Buddy 3.0")
-app.mainloop()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("800x600")
+    app = Application(master=root)
+    app.master.title("Survivor Buddy 3.0")
+    app.mainloop()

@@ -9,19 +9,21 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 class NotificationFrame(tk.Frame):
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
-        self.grid()
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
         
         self.label = ttk.Label(self, text="Notifications")
-        self.label.grid()
+        self.label.pack()
+        #self.label.grid(row=0, rowspan=1, sticky="w")
         
         self.scrollbar = ttk.Scrollbar(self)
-        self.scrollbar.grid()
+        self.scrollbar.pack(fill="x", expand=1)
+        #self.scrollbar.grid(row=1, rowspan=3, sticky="w")
         
-        self.text = tk.Text(self.scrollbar)
+        self.text = tk.Text(self.scrollbar, height=4)
         self.text.config(state=tk.DISABLED)
-        self.text.grid()
+        self.text.pack()
+        #self.text.grid()
         
     def append_line(self, line):
         self.text.config(state=tk.NORMAL)
