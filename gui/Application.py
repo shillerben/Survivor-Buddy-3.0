@@ -15,7 +15,6 @@ from StatusBar import StatusBar
 class Application(tk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        #self.grid(sticky="nsew")
         self.pack()
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
@@ -28,19 +27,15 @@ class Application(tk.Frame):
         
         self.position_frame = PositionFrame(self)
         self.position_frame.pack(fill="x")
-        #self.position_frame.grid(row=0, rowspan=4, columnspan=4, sticky="ew")
         
         self.control_buttons = ControlButtons(self)
         self.control_buttons.pack(fill="x")
-        #self.control_buttons.grid(row=4, rowspan=2, columnspan=4, sticky="ew")
         
         self.notifications_frame = NotificationFrame(self)
         self.notifications_frame.pack(fill="x")
-        #self.notifications_frame.grid(row=6, rowspan=4, columnspan=4, sticky="ew")
         
         self.status_bar = StatusBar(self)
         self.status_bar.pack(fill="x")
-        #self.status_bar.grid(row=10, rowspan=1, columnspan=4, sticky="ew")
         
         self.master.config(menu=self.menu_bar)
         
