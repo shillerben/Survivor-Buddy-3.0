@@ -11,6 +11,7 @@ from PositionFrame import PositionFrame
 from ControlButtons import ControlButtons
 from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
+from SerialArmController import SerialArmController
 
 class Application(tk.Frame):
     def __init__(self, master, **kwargs):
@@ -20,6 +21,7 @@ class Application(tk.Frame):
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.config(padx=16, pady=16)
         self.create_widgets()
+        
         
     def create_widgets(self):
         self.menu_bar = tk.Menu(self)
@@ -38,6 +40,7 @@ class Application(tk.Frame):
         self.status_bar.pack(fill="x")
         
         self.master.config(menu=self.menu_bar)
+        
         
     def create_menu(self, root_menu):
         # File Menu
@@ -66,9 +69,11 @@ class Application(tk.Frame):
         self.help_menu.add_command(label="About Survivor Buddy 3.0", command=self.hello)
         root_menu.add_cascade(label="Help", menu=self.help_menu)
 
+
     def hello(self):
         print("Hello from Menu")
         self.notifications_frame.append_line("Hello from Menu")
+        
         
 
 if __name__ == "__main__":

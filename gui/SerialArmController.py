@@ -7,51 +7,23 @@ Created on Mon Mar  9 08:34:29 2020
 
 from serial.tools import list_ports
 import serial
-import sys
 
 ARDUINO_VID  = 0x2341
 UNO_PID      = 0x0001
 LEONARDO_PID = 0x8036
 
 
-class Value:
-    def __init__(self, val):
-        self.value = val
-        
-
 class Position:
     def __init__(self, pitch=0, yaw=0, roll=0):
-        self.pitch_ref = Value(pitch)
-        self.yaw_ref = Value(yaw)
-        self.roll_ref = Value(roll)
-        
-        
-    def get_pitch(self):
-        return self.pitch_ref.value
-
-    def set_pitch(self, val):
-        self.pitch_ref.value = val
-        
-    
-    def get_yaw(self):
-        return self.yaw_ref.value
-    
-    def set_yaw(self, val):
-        self.yaw_ref.value = val
-    
-    
-    def get_roll(self):
-        return self.roll_ref.value
-    
-    def set_roll(self, val):
-        self.roll_ref.value = val
+        self.pitch = pitch
+        self.yaw = yaw
+        self.roll = roll
         
         
     def __str__(self):
-        return "P: {}, Y: {}, R: {}".format(
-            self.get_pitch(), self.get_yaw(), self.get_roll())
-
-
+        return "P: {}, Y: {}, R: {}".format(self.pitch, self.yaw, self.roll)
+        
+        
 class SerialArmController:
     def __init__(self):
         self._com_port = ""

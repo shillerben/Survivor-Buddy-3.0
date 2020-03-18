@@ -8,6 +8,7 @@ Created on Mon Mar  2 08:08:16 2020
 import tkinter as tk
 import tkinter.ttk as ttk
 
+
 class LabelScaleSpinbox(tk.Frame):
     def __init__(self, master, text="", from_=0, to=10, **kwargs):
         super().__init__(master, **kwargs)
@@ -60,8 +61,10 @@ class LabelScaleSpinbox(tk.Frame):
             self.spinbox.set(str(round(self.current_value)))
             return False
         
+        
     def invalid_spinbox(self):
         print("Error: Position input must be a number between {} and {}".format(self.min, self.max))
+        
         
     def set_slider(self):
         try:

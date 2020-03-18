@@ -8,6 +8,7 @@ Created on Wed Feb 26 17:10:35 2020
 import tkinter as tk
 import tkinter.ttk as ttk
 
+
 class ControlButtons(tk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
