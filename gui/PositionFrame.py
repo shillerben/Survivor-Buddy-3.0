@@ -69,7 +69,6 @@ class LabelScaleSpinbox(tk.Frame):
     def set_slider(self):
         try:
             val = int(self.spinbox.get())
-            print(val)
         except:
             print("Error: Input must be a number")
             return
@@ -77,8 +76,10 @@ class LabelScaleSpinbox(tk.Frame):
         
         
 class PositionFrame(tk.Frame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, arm_controller, **kwargs):
         super().__init__(master, **kwargs)
+        
+        self.serial_arm_controller = arm_controller
         
         self.render_frame = tk.Frame(self)
         self.render_frame.pack(side="left")

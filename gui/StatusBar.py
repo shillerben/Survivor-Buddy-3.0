@@ -40,10 +40,10 @@ class StatusBar(tk.Frame):
 
 
     def set_status(self, status):
-        print("set_status({})".format(status))
+        #print("set_status({})".format(status))
         self.status_text.set(status)
         
         
     def set_orientation(self, orientation):
         self.orientation_text.set(orientation)
-        print("set_orientation({})".format(orientation))
+        #print("set_orientation({})".format(orientation))

@@ -25,10 +25,13 @@ class Position:
         
         
 class SerialArmController:
-    def __init__(self):
+    def __init__(self, _status_bar):
+        self.status_bar = _status_bar
         self._com_port = ""
         self._device = None
         self.devs = []
+        self.position = Position()
+        self.is_connected = False
      
         
     def update_devs(self):
@@ -45,30 +48,44 @@ class SerialArmController:
            
             
     def connect(self, comport):
-        self._device = serial.Serial(comport, timeout=1)
+        if not self.is_connected:
+            self._device = serial.Serial(comport, timeout=1)
+            self.status_bar.set_status("CONNECTED")
+            self.is_connected = True
         
         
     def close(self):
-        self._device.close()
+        if self.is_connected:
+            self._device.close()
+            self.status_bar.set_status("DISCONNECTED")
+            self.is_connected = False
         
         
     def send(self, data):
-        self._device.write(data.encode())
+        if self.is_connected:
+            print("Sending: \"{}\"".format(data))
+            self._device.write(data.encode())
+            self.recv()
         
         
     def recv(self):
-        return self._device.read(256)
+        if self.is_connected:
+            data = self._device.read(256)
+            print("Received: \"{}\"".format(data))
+            return self._device.read(256)
     
     
     def get_position(self):
-        print("Called get_position()...")
-        self.send("POS")
-        response = self.recv()
-        print("Received: {}".format(response))
+        if self.is_connected:
+            print("Called get_position()...")
+            self.send("POS")
+            response = self.recv()
+            print("Received: {}".format(response))
         
         
     def set_position(self, position):
-        print("Called set_position({})...".format(str(position)))
-        data = str(position)
-        self.send(data)
+        if self.is_connected:
+            print("Called set_position({})...".format(str(position)))
+            data = str(position)
+            self.send(data)
         
