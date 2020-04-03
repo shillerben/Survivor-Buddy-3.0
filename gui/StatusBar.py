@@ -25,6 +25,7 @@ class StatusBar(tk.Frame):
             self.status_frame, textvariable=self.status_text)
         self.status_text_label.pack(side="left")
 
+        ''' Might get rid of this because it doesn't seem useful anymore
         # ORIENTATION #
         self.orientation_frame = tk.Frame(self)
         self.orientation_frame.pack(side="right")
@@ -37,6 +38,7 @@ class StatusBar(tk.Frame):
         self.orientation_text_label = ttk.Label(
             self.orientation_frame, textvariable=self.orientation_text)
         self.orientation_text_label.pack(side="left")
+        '''
 
 
     def set_status(self, status):
