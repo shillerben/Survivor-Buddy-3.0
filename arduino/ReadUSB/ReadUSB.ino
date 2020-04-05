@@ -1,3 +1,5 @@
+#include <VarSpeedServo.h>
+
 /*
   AnalogReadSerial
 
@@ -9,6 +11,27 @@
 
   http://www.arduino.cc/en/Tutorial/AnalogReadSerial
 */
+
+//Control and Feedback Pins
+//regular 180 servos
+int leftBasePin = 9; 
+int rightBasePin = 10; 
+int leftBaseFeedBack = A0; 
+int rightBaseFeedBack = A1; 
+
+//360 servo
+int turnTablePin = 11;
+int turnTableFeedBack  = A3;
+
+//180 mini servo
+int phoneMountPin =12 ;
+int phoneMountFeedback = A4;
+
+//Create VarSpeedServo objects 
+VarSpeedServo leftBaseServo;
+VarSpeedServo rightBaseServo;
+VarSpeedServo turnTableServo;
+VarSpeedServo phoneMountServo; 
 
 typedef unsigned char u_char;
 typedef unsigned short u_short;

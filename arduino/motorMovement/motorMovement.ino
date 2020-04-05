@@ -15,6 +15,12 @@ int turnTableFeedBack  = A3;
 int phoneMountPin =12 ;
 int phoneMountFeedback = A4;
 
+// Position constants
+const int RIGHT_BASE_DOWN = 45;
+const int RIGHT_BASE_UP = 125;
+const int LEFT_BASE_DOWN = 150;
+const int LEFT_BASE_UP = 65;
+
 //Create VarSpeedServo objects 
 VarSpeedServo leftBaseServo;
 VarSpeedServo rightBaseServo;
@@ -32,8 +38,10 @@ void setup() {
   Serial.begin(9600);
   
   // attaches the servo on pin to the servo object
-  leftBaseServo.attach(leftBasePin, 0, 90);  
+  leftBaseServo.attach(leftBasePin);  
+  leftBaseServo.write(LEFT_BASE_DOWN, 20);
   rightBaseServo.attach(rightBasePin);
+  rightBaseServo.write(RIGHT_BASE_DOWN, 20);
   turnTableServo.attach(turnTablePin);
   phoneMountServo.attach(phoneMountPin);
 }
@@ -310,14 +318,16 @@ void close(){
   
 }
 void up(){
-  leftBaseServo.write(90);
-  rightBaseServo.write(90);
-  delay(1000);
+  leftBaseServo.write(LEFT_BASE_UP, 20);
+  rightBaseServo.write(RIGHT_BASE_UP, 20);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
 }
 void down(){
-  leftBaseServo.write(0);
-  rightBaseServo.write(0);
-  delay(1000);
+  leftBaseServo.write(LEFT_BASE_DOWN, 20);
+  rightBaseServo.write(RIGHT_BASE_DOWN, 20);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
 }
 void nod(){
   //up down, arm nods twice
@@ -363,10 +373,18 @@ void shutDown(){
 //close arm all the way
 }
 
+void test() {
+  up();
+  delay(1000);
+  down();
+  delay(1000);
+}
+
 /*******************************************************************/
 /* put your main code here, to run repeatedly: */
-void loop() { 
-
+void loop() {
+  test();
+  /*
   if (Serial.available() > 0) {//serial is reading stuff 
     serialData = Serial.read(); 
 
@@ -426,5 +444,6 @@ void loop() {
     //end else if serialData value
     
   } //end serial available
+  */
 
 } //end loop
