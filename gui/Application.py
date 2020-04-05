@@ -13,6 +13,7 @@ from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
 from SerialArmController import SerialArmController
 
+
 class Application(tk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -52,11 +53,11 @@ class Application(tk.Frame):
         root_menu.add_cascade(label="File", menu=self.file_menu)
         
         # Device Menu
-        self.device_menu = tk.Menu(root_menu, tearoff=0, postcommand=self.refresh_devices)
-        '''
+        self.device_menu = tk.Menu(root_menu, tearoff=0)
+        
         self.device_menu.add_command(label="Refresh Devices", command=self.refresh_devices)
         self.device_menu.add_separator()
-        '''
+        
         root_menu.add_cascade(label="Device", menu=self.device_menu)
         
         '''
@@ -78,7 +79,7 @@ class Application(tk.Frame):
 
 
     def refresh_devices(self):
-        self.device_menu.delete(0, 100)
+        self.device_menu.delete(2, 100)
         self.serial_arm_controller.update_devs()
         if not self.serial_arm_controller.devs:
             self.device_menu.add_command(label="No devices", state=tk.DISABLED)
@@ -86,13 +87,19 @@ class Application(tk.Frame):
             for dev in self.serial_arm_controller.devs:
                 self.device_menu.add_command(
                     label="{}: {}".format(dev[0], dev[1]),
-                    command=lambda: self.serial_arm_controller.connect(dev[0])
-                )
-                print(dev)
+                    command=lambda: self.connect(dev)
+                )        
+            
+    def connect(self, dev):
+        self.serial_arm_controller.connect(dev[0])
         self.device_menu.add_command(
             label="Close Connection",
-            command=self.serial_arm_controller.close
+            command=self.close
         )
+    
+    def close(self):
+        self.device_menu.delete(2 + len(self.serial_arm_controller.devs))
+        self.serial_arm_controller.close()
         
     def hello(self):
         print("Hello from Menu")

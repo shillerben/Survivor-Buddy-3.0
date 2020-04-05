@@ -39,6 +39,7 @@ class ControlButtons(tk.Frame):
         self.open_close_arm_btn.pack(side="left")
         #self.open_close_arm_btn.grid(row=0, column=1)
         
+        '''
         # Portrait/Landscape button
         self.portrait_landscape_text = tk.StringVar()
         self.portrait_landscape_text.set("Change to Landscape")
@@ -46,10 +47,20 @@ class ControlButtons(tk.Frame):
             textvariable=self.portrait_landscape_text, command=self.change_orientation)
         self.portrait_landscape_btn.pack(side="left")
         #self.portrait_landscape_btn.grid(row=0, column=2)
+        '''
+        
+        # Portrait button
+        self.portrait_btn = ttk.Button(self.top_frame,
+            text="Portrait", command=self.portrait)
+        self.portrait_btn.pack(side="left")
+        
+        self.landscape_btn= ttk.Button(self.top_frame,
+            text="Landscape", command=self.landscape)
+        self.landscape_btn.pack(side="left")
         
         # Head Tilt button
         self.head_tilt_btn = ttk.Button(self.top_frame,
-            text="Tilt Head", command=self.tilt_head)
+            text="Tilt Head", command=self.tilt)
         self.head_tilt_btn.pack(side="left")
         #self.head_tilt_btn.grid(row=0, column=3)
         
@@ -58,13 +69,13 @@ class ControlButtons(tk.Frame):
         
         # Nod Head button
         self.nod_head_btn = ttk.Button(self.bottom_frame,
-            text="Nod Head", command=self.nod_head)
+            text="Nod Head", command=self.nod)
         self.nod_head_btn.pack(side="left")
         #self.nod_head_btn.grid(row=1, column=0)
         
         # Shake Head button
         self.shake_head_btn = ttk.Button(self.bottom_frame,
-            text="Shake Head", command=self.shake_head)
+            text="Shake Head", command=self.shake)
         self.shake_head_btn.pack(side="left")
         #self.shake_head_btn.grid(row=1, column=1)
         
@@ -81,15 +92,16 @@ class ControlButtons(tk.Frame):
         if self.serial_arm_controller.is_connected:
             if self.open_close_status == "CLOSED":
                 print("Opening arm...")
-                self.serial_arm_controller.send("OPEN")
+                self.serial_arm_controller.open_arm()
                 self.open_close_text.set("Close Arm")
                 self.open_close_status = "OPEN"
             else:
                 print("Closing arm...")
-                self.serial_arm_controller.send("CLOSE")
+                self.serial_arm_controller.close_arm()
                 self.open_close_text.set("Open Arm")
                 self.open_close_status = "CLOSED"
                 
+    '''
     def change_orientation(self):
         if self.serial_arm_controller.is_connected:
             if self.orientation == "PORTRAIT":
@@ -102,21 +114,34 @@ class ControlButtons(tk.Frame):
                 self.serial_arm_controller.send("PORTRAIT")
                 self.portrait_landscape_text.set("Change to Landscape")
                 self.orientation = "PORTRAIT"
+    '''
                 
-    def tilt_head(self):
+    def portrait(self):
+        if self.serial_arm_controller.is_connected:
+            print("Changing to portrait...")
+            self.serial_arm_controller.portrait()
+            self.orientation = "PORTRAIT"
+                
+    def landscape(self):
+        if self.serial_arm_controller.is_connected:
+            print("Changing to landscape...")
+            self.serial_arm_controller.landscape()
+            self.orientation = "LANDSCAPE"
+                
+    def tilt(self):
         if self.serial_arm_controller.is_connected:
             print("Tilting head...")
-            self.serial_arm_controller.send("TILT")
+            self.serial_arm_controller.tilt()
             
-    def nod_head(self):
+    def nod(self):
         if self.serial_arm_controller.is_connected:
             print("Nodding head...")
-            self.serial_arm_controller.send("NOD")
+            self.serial_arm_controller.nod()
             
-    def shake_head(self):
+    def shake(self):
         if self.serial_arm_controller.is_connected:
             print("Shaking head...")
-            self.serial_arm_controller.send("SHAKE")
+            self.serial_arm_controller.shake()
         
     def hello(self):
         print("Hello from ControlButtons")

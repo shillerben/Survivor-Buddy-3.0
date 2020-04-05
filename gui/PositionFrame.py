@@ -10,11 +10,13 @@ import tkinter.ttk as ttk
 
 
 class LabelScaleSpinbox(tk.Frame):
-    def __init__(self, master, text="", from_=0, to=10, **kwargs):
+    def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, **kwargs):
         super().__init__(master, **kwargs)
         
         self.min = from_
         self.max = to
+        self.axis = axis
+        self.serial_arm_controller = dev
         
         if text:
             self.label = ttk.Label(self, text=text)
@@ -24,7 +26,7 @@ class LabelScaleSpinbox(tk.Frame):
         self.from_label.pack(side="left")
         
         self.slider = ttk.Scale(self, from_=from_, to=to, 
-            orient="horizontal", length=200, command=self.set_spinbox)
+            orient="horizontal", length=200)#, command=self.set_spinbox)
         self.slider.pack(side="left")
         
         self.to_label = ttk.Label(self, text=str(to))
@@ -45,6 +47,7 @@ class LabelScaleSpinbox(tk.Frame):
     def set_spinbox(self, event):
         self.current_value = self.slider.get()
         self.spinbox.set(str(round(self.current_value)))
+        #self.send_command()
         
         
     def validate_spinbox(self, val):
@@ -73,6 +76,18 @@ class LabelScaleSpinbox(tk.Frame):
             print("Error: Input must be a number")
             return
         self.slider.set(val)
+        self.current_value = val
+        self.send_command()
+        #self.serial_arm_controller.recv()
+    
+    def send_command(self):
+        if self.serial_arm_controller.is_connected:
+            if self.axis == 0:
+                self.serial_arm_controller.set_pitch(self.current_value)
+            elif self.axis == 1:
+                self.serial_arm_controller.set_yaw(self.current_value)
+            elif self.axis == 2:
+                self.serial_arm_controller.set_roll(self.current_value)
         
         
 class PositionFrame(tk.Frame):
@@ -97,12 +112,15 @@ class PositionFrame(tk.Frame):
         
         
     def create_controls(self, master):
-        self.pitch_control = LabelScaleSpinbox(master, text="Pitch: ", from_=0, to=90)
+        self.pitch_control = LabelScaleSpinbox(
+            master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller)
         self.pitch_control.pack()
         
-        self.yaw_control = LabelScaleSpinbox(master, text="Yaw: ", from_=-180, to=180)
+        self.yaw_control = LabelScaleSpinbox(
+            master, text="Yaw: ", from_=-180, to=180, axis=1, dev=self.serial_arm_controller)
         self.yaw_control.pack()
         
-        self.roll_control = LabelScaleSpinbox(master, text="Roll: ", from_=-90, to=90)
+        self.roll_control = LabelScaleSpinbox(
+            master, text="Roll: ", from_=-90, to=90, axis=2, dev=self.serial_arm_controller)
         self.roll_control.pack()
         
