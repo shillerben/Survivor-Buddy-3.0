@@ -20,11 +20,11 @@ int leftBaseFeedBack = A0;
 int rightBaseFeedBack = A1; 
 
 //360 servo
-int turnTablePin = 11;
+int turnTablePin = 3;
 int turnTableFeedBack  = A3;
 
 //180 mini servo
-int phoneMountPin =12 ;
+int phoneMountPin =6;
 int phoneMountFeedback = A4;
 
 //Create VarSpeedServo objects 

@@ -8,11 +8,11 @@ int leftBaseFeedBack = A0;
 int rightBaseFeedBack = A1; 
 
 //360 servo
-int turnTablePin = 11;
+int turnTablePin = 3;
 int turnTableFeedBack  = A3;
 
 //180 mini servo
-int phoneMountPin =12 ;
+int phoneMountPin =6;
 int phoneMountFeedback = A4;
 
 // Position constants
@@ -20,6 +20,9 @@ const int RIGHT_BASE_DOWN = 45;
 const int RIGHT_BASE_UP = 125;
 const int LEFT_BASE_DOWN = 150;
 const int LEFT_BASE_UP = 65;
+const int PHONEMOUNT_LANDSCAPE = 7;
+const int PHONEMOUNT_PORTRAIT = 115;
+const int PHONEMOUNT_TILT = 60;
 
 //Create VarSpeedServo objects 
 VarSpeedServo leftBaseServo;
@@ -39,27 +42,36 @@ void setup() {
   
   // attaches the servo on pin to the servo object
   leftBaseServo.attach(leftBasePin);  
-  leftBaseServo.write(LEFT_BASE_DOWN, 20);
+  leftBaseServo.write(LEFT_BASE_UP);
   rightBaseServo.attach(rightBasePin);
-  rightBaseServo.write(RIGHT_BASE_DOWN, 20);
+  rightBaseServo.write(RIGHT_BASE_UP);
   turnTableServo.attach(turnTablePin);
   phoneMountServo.attach(phoneMountPin);
+  phoneMountServo.write(PHONEMOUNT_PORTRAIT);
 }
 
 /*******************************************************************/
 /*Phone Mount Functions*/
 void portrait(){ //phoneMountServo moves phone to portrait position
-    phoneMountServo.write(90);
-    delay(1000); 
+    phoneMountServo.write(PHONEMOUNT_PORTRAIT, 20, true);
 }
+
 void landscape(){ //phoneMountServo moves phone to landscape position
-    phoneMountServo.write(180);
-    delay(1000); 
-} 
-void tilt(){ //phoneMountServo moves phone to tilted position
-    phoneMountServo.write(135);
-    delay(1000);
+    phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 20, true);
 }
+
+void tiltPortrait(){ //phoneMountServo moves phone to tilted position
+    phoneMountServo.write(PHONEMOUNT_TILT, 60, true);
+    delay(500);
+    phoneMountServo.write(PHONEMOUNT_PORTRAIT, 60, true);
+}
+
+void tiltLandscape(){ //phoneMountServo moves phone to tilted position
+    phoneMountServo.write(PHONEMOUNT_TILT, 60, true);
+    delay(500);
+    phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 60, true);
+}
+
 /*
  * Get current position of Phone Mount Servo
 */
@@ -309,14 +321,10 @@ int getPositionBM(){ //left base motor and right base motor
 return anglePos;
 }
 
-void open(){
-  //open arm, move arm up
-  
+void close_(){
+  // front, portrait, then down
 }
-void close(){
-  //close, move arm down
-  
-}
+
 void up(){
   leftBaseServo.write(LEFT_BASE_UP, 20);
   rightBaseServo.write(RIGHT_BASE_UP, 20);
@@ -352,15 +360,12 @@ void shake(){
 */
 void homeServos(){
   //Reset all servos to position 0
-  leftBaseServo.write(0);
-  rightBaseServo.write(0);
-  turnTableServo.write(0);
-  phoneMountServo.write(90);
-  delay(1000); 
+  close_(); 
 }
 /*Emergency Shut Down*/
-void emergencyShutDown(){
-  //stop all motor movement
+void emergencyShutdown(){
+  //stop all motor movement. will need to unplug and plug back in to move again
+  while(true) {}
 }
 /*Regular open*/
 void openCompletely(){
@@ -368,16 +373,19 @@ void openCompletely(){
 
 }
 /*Normal Shut Down*/
-void shutDown(){
+void shutdown(){
   //need to make sure all other motors are in correct postion to close
 //close arm all the way
 }
 
 void test() {
   up();
+  delay(50);
+  landscape();
   delay(1000);
-  down();
+  portrait();
   delay(1000);
+  emergencyShutdown();
 }
 
 /*******************************************************************/
