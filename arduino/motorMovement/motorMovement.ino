@@ -4,8 +4,8 @@
 //regular 180 servos
 int leftBasePin = 9; 
 int rightBasePin = 10; 
-int leftBaseFeedBack = A0; 
-int rightBaseFeedBack = A1; 
+int leftBaseFeedback = A0; 
+int rightBaseFeedback = A1; 
 
 //360 servo
 int turnTablePin = 3;
@@ -15,14 +15,26 @@ int turnTableFeedBack  = A3;
 int phoneMountPin =6;
 int phoneMountFeedback = A4;
 
+int ledPin = 2;
+
 // Position constants
-const int RIGHT_BASE_DOWN = 45;
+const int RIGHT_BASE_DOWN = 40;
 const int RIGHT_BASE_UP = 125;
 const int LEFT_BASE_DOWN = 150;
 const int LEFT_BASE_UP = 65;
 const int PHONEMOUNT_LANDSCAPE = 7;
 const int PHONEMOUNT_PORTRAIT = 115;
 const int PHONEMOUNT_TILT = 60;
+
+// Feedback constants
+const int RIGHT_BASE_FB_DOWN = 186;
+const int RIGHT_BASE_FB_UP = 369;
+const int LEFT_BASE_FB_DOWN = 415;
+const int LEFT_BASE_FB_UP = 235;
+const int PHONEMOUNT_FB_PORTRAIT = 0;
+const int PHONEMOUNT_FB_LANDSCAPE = 0;
+const int TABLETOP_LEFT = 0;
+const int TABLETOP_RIGHT = 0;
 
 //Create VarSpeedServo objects 
 VarSpeedServo leftBaseServo;
@@ -39,6 +51,9 @@ enum Command {PITCH, YAW, ROLL, CLOSE, OPEN, PORTRAIT,
 /* put your setup code here, to run once: */
 void setup() {
   Serial.begin(9600);
+
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
   
   // attaches the servo on pin to the servo object
   leftBaseServo.attach(leftBasePin);  
@@ -53,11 +68,11 @@ void setup() {
 /*******************************************************************/
 /*Phone Mount Functions*/
 void portrait(){ //phoneMountServo moves phone to portrait position
-    phoneMountServo.write(PHONEMOUNT_PORTRAIT, 20, true);
+    phoneMountServo.write(PHONEMOUNT_PORTRAIT, 40, true);
 }
 
 void landscape(){ //phoneMountServo moves phone to landscape position
-    phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 20, true);
+    phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 40, true);
 }
 
 void tiltPortrait(){ //phoneMountServo moves phone to tilted position
@@ -76,249 +91,20 @@ void tiltLandscape(){ //phoneMountServo moves phone to tilted position
  * Get current position of Phone Mount Servo
 */
 int getPositionPM(){
-  int anglePos;
   int potVal = analogRead(phoneMountFeedback);
-
-  if ( potVal >= 606){
-    anglePos = 180;
-  }
-  else if(potVal >= 590){
-    anglePos = 175;
-  }
-  else if (potVal >= 575){
-    anglePos = 170; 
-  }
-  else if(potVal >= 559){
-    anglePos = 165;
-  }
-  else if (potVal >= 543){
-    anglePos = 160; 
-  }
-  else if(potVal >= 529){
-    anglePos = 155;
-  }
-  else if (potVal >= 514){
-    anglePos = 150; 
-  }
-  else if(potVal >= 498){
-    anglePos = 145;
-  }
-  else if (potVal >= 484){
-    anglePos = 140; 
-  }
-  else if(potVal >= 468){
-    anglePos = 135;
-  }
-  else if (potVal >= 453){
-    anglePos = 130; 
-  }
-  else if(potVal >= 437){
-    anglePos = 125;
-  }
-  else if (potVal >= 423){
-    anglePos = 120; 
-  }
-  else if(potVal >= 406){
-    anglePos = 115;
-  }
-  else if (potVal >= 391){
-    anglePos = 110; 
-  }
-  else if(potVal >= 376){
-    anglePos = 105;
-  }
-  else if (potVal >= 360){
-    anglePos = 100; 
-  }
-  else if(potVal >= 344){
-    anglePos = 95;
-  }
-  else if (potVal >= 330){
-    anglePos = 90; 
-  }
-  else if(potVal >= 313){
-    anglePos = 85;
-  }
-  else if (potVal >= 298){
-    anglePos = 80; 
-  }
-  else if(potVal >= 282){
-    anglePos = 75;
-  }
-  else if (potVal >= 266){
-    anglePos = 70; 
-  }
-  else if(potVal >= 251){
-    anglePos = 65;
-  }
-  else if (potVal >= 236){
-    anglePos = 60; 
-  }
-  else if(potVal >= 221){
-    anglePos = 55;
-  }
-  else if (potVal >= 204){
-    anglePos = 50; 
-  }
-  else if(potVal >= 191){
-    anglePos = 45;
-  }
-  else if (potVal >= 174){
-    anglePos = 40; 
-  }
-  else if(potVal >= 158){
-    anglePos = 35;
-  }
-  else if (potVal >= 143){
-    anglePos = 30; 
-  }
-  else if(potVal >= 129){
-    anglePos = 25;
-  }
-  else if (potVal >= 112){
-    anglePos = 20; 
-  }
-  else if(potVal >= 98){
-    anglePos = 15;
-  }
-  else if (potVal >= 82){
-    anglePos = 10; 
-  }
-  else if(potVal >= 68){
-    anglePos = 5;
-  }
-  else {
-    anglePos = 0; 
-  }
-return anglePos;
+  return map(potVal, PHONEMOUNT_FB_PORTRAIT, PHONEMOUNT_FB_LANDSCAPE, 0, 90);
 }
 /*******************************************************************/
 /*Base Motor Functions*/
 /*
  * Get current position of Base Servos
 */
-int getPositionBM(){ //left base motor and right base motor
-//decided to only get left base motor pot values
-//as pot intervals vary from left and right motor
-//but want them both to be at the same angle at all times
-//assign same pos to both motors
-//if potvalleft && potvalright, cant gurantee if, else always be 0
-  int anglePos;
-  int potValLeft = analogRead(leftBaseFeedBack);
-  int potValRight = analogRead(rightBaseFeedBack);
-
-  if ( potValLeft >= 467){
-    anglePos = 180;
-  }
-  else if(potValLeft >= 458){
-    anglePos = 175;
-  }
-  else if (potValLeft >= 448){
-    anglePos = 170; 
-  }
-  else if(potValLeft >= 438){
-    anglePos = 165;
-  }
-  else if (potValLeft >= 428){
-    anglePos = 160; 
-  }
-  else if(potValLeft >= 419){
-    anglePos = 155;
-  }
-  else if (potValLeft >= 408){
-    anglePos = 150; 
-  }
-  else if(potValLeft >= 399){
-    anglePos = 145;
-  }
-  else if (potValLeft >= 388){
-    anglePos = 140; 
-  }
-  else if(potValLeft >= 377){
-    anglePos = 135;
-  }
-  else if (potValLeft >= 367){
-    anglePos = 130; 
-  }
-  else if(potValLeft >= 357){
-    anglePos = 125;
-  }
-  else if (potValLeft >= 347 ){
-    anglePos = 120; 
-  }
-  else if(potValLeft >= 336){
-    anglePos = 115;
-  }
-  else if (potValLeft >= 326){
-    anglePos = 110; 
-  }
-  else if(potValLeft >= 316){
-    anglePos = 105;
-  }
-  else if (potValLeft >=305 ){
-    anglePos = 100; 
-  }
-  else if(potValLeft >=296 ){
-    anglePos = 95;
-  }
-  else if (potValLeft >= 286){
-    anglePos = 90; 
-  }
-  else if(potValLeft >=273 ){
-    anglePos = 85;
-  }
-  else if (potValLeft >=264 ){
-    anglePos = 80; 
-  }
-  else if(potValLeft >=252 ){
-    anglePos = 75;
-  }
-  else if (potValLeft >=242 ){
-    anglePos = 70; 
-  }
-  else if(potValLeft >=232 ){
-    anglePos = 65;
-  }
-  else if (potValLeft >= 222){
-    anglePos = 60; 
-  }
-  else if(potValLeft >= 209){
-    anglePos = 55;
-  }
-  else if (potValLeft >= 198){
-    anglePos = 50; 
-  }
-  else if(potValLeft >=188 ){
-    anglePos = 45;
-  }
-  else if (potValLeft >= 178){
-    anglePos = 40; 
-  }
-  else if(potValLeft >= 168){
-    anglePos = 35;
-  }
-  else if (potValLeft >=158 ){
-    anglePos = 30; 
-  }
-  else if(potValLeft >=145 ){
-    anglePos = 25;
-  }
-  else if (potValLeft >=134 ){
-    anglePos = 20; 
-  }
-  else if(potValLeft >= 123 ){
-    anglePos = 15;
-  }
-  else if (potValLeft >= 111 ){
-    anglePos = 10; 
-  }
-  else if(potValLeft >= 98 ){
-    anglePos = 5;
-  }
-  else {
-    anglePos = 0; 
-  }
-return anglePos;
+int getPositionBM(){
+//  int potValLeft = analogRead(leftBaseFeedback);
+//  int leftAngle = map(potValLeft, LEFT_BASE_FB_DOWN, LEFT_BASE_FB_UP, 0, 90);
+  int potValRight = analogRead(rightBaseFeedback);
+  int rightAngle = map(potValRight, RIGHT_BASE_FB_DOWN, RIGHT_BASE_FB_UP, 0, 90);
+  return rightAngle;
 }
 
 void close_(){
@@ -326,24 +112,43 @@ void close_(){
 }
 
 void up(){
-  leftBaseServo.write(LEFT_BASE_UP, 20);
-  rightBaseServo.write(RIGHT_BASE_UP, 20);
+  leftBaseServo.write(LEFT_BASE_UP, 40);
+  rightBaseServo.write(RIGHT_BASE_UP, 40);
   leftBaseServo.wait();
   rightBaseServo.wait();
 }
 void down(){
-  leftBaseServo.write(LEFT_BASE_DOWN, 20);
-  rightBaseServo.write(RIGHT_BASE_DOWN, 20);
+  leftBaseServo.write(LEFT_BASE_DOWN, 40);
+  rightBaseServo.write(RIGHT_BASE_DOWN, 40);
   leftBaseServo.wait();
   rightBaseServo.wait();
 }
 void nod(){
   //up down, arm nods twice
-  up();
-  down();
-  up();
-  down();
-  up();
+  leftBaseServo.write(LEFT_BASE_UP, 60);
+  rightBaseServo.write(RIGHT_BASE_UP, 60);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
+  delay(100);
+  leftBaseServo.write(70, 60);
+  rightBaseServo.write(70, 60);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
+  delay(100);
+  leftBaseServo.write(LEFT_BASE_UP, 60);
+  rightBaseServo.write(RIGHT_BASE_UP, 60);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
+  delay(100);
+  leftBaseServo.write(70, 60);
+  rightBaseServo.write(70, 60);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
+  delay(100);
+  leftBaseServo.write(LEFT_BASE_UP, 60);
+  rightBaseServo.write(RIGHT_BASE_UP, 60);
+  leftBaseServo.wait();
+  rightBaseServo.wait();
 }
 /*******************************************************************/
 /*Turn Table Motor Functions*/
@@ -367,11 +172,7 @@ void emergencyShutdown(){
   //stop all motor movement. will need to unplug and plug back in to move again
   while(true) {}
 }
-/*Regular open*/
-void openCompletely(){
-//open arm to upright pos
 
-}
 /*Normal Shut Down*/
 void shutdown(){
   //need to make sure all other motors are in correct postion to close
@@ -380,12 +181,14 @@ void shutdown(){
 
 void test() {
   up();
-  delay(50);
+  tiltPortrait();
+  delay(1000);
   landscape();
+  delay(1000);
+  tiltLandscape();
   delay(1000);
   portrait();
   delay(1000);
-  emergencyShutdown();
 }
 
 /*******************************************************************/
