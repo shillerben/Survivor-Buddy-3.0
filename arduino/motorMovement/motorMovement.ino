@@ -43,7 +43,7 @@ VarSpeedServo turnTableServo;
 VarSpeedServo phoneMountServo; 
 
 //Serial Data
-char serialData;
+unsigned char serialData;
 
 enum Command {PITCH, YAW, ROLL, CLOSE, OPEN, PORTRAIT, 
               LANDSCAPE, NOD, SHAKE, TILT};
@@ -57,9 +57,9 @@ void setup() {
   
   // attaches the servo on pin to the servo object
   leftBaseServo.attach(leftBasePin);  
-  leftBaseServo.write(LEFT_BASE_UP);
+  leftBaseServo.write(LEFT_BASE_DOWN);
   rightBaseServo.attach(rightBasePin);
-  rightBaseServo.write(RIGHT_BASE_UP);
+  rightBaseServo.write(RIGHT_BASE_DOWN);
   turnTableServo.attach(turnTablePin);
   phoneMountServo.attach(phoneMountPin);
   phoneMountServo.write(PHONEMOUNT_PORTRAIT);
@@ -194,67 +194,35 @@ void test() {
 /*******************************************************************/
 /* put your main code here, to run repeatedly: */
 void loop() {
-  test();
-  /*
+  //test();
+  
   if (Serial.available() > 0) {//serial is reading stuff 
     serialData = Serial.read(); 
 
-    if(serialData == '0'){ 
-      homeServos();
+    if(serialData == 0x03){ // close 
+      down();
     }
     //phone mount serials ****************************************
-    else if (serialData == '1'){
+    else if (serialData == 0x04){ // open
+      up();
+    }
+    else if(serialData == 0x05){ // portrait
       portrait();
     }
-    else if(serialData == '2'){
+    else if (serialData == 0x06){ // landscape
       landscape();
-    }
-    else if (serialData == '3'){ //move left ccw
-      int currPos = getPositionPM();
-      int newPos = currPos +5;
-      if (newPos <=180){
-        phoneMountServo.write(newPos);
-        delay(1000);
-      }//else no movement, at limit
     } 
-    else if(serialData == '4'){ //move right cw
-      int currPos = getPositionPM();
-      int newPos = currPos - 5;
-      if( newPos >= 0){
-        phoneMountServo.write(newPos); 
-        delay(1000); 
-      }//else no movement, at limit
-    }
-    //base motor serials ****************************************
-    else if (serialData == '5'){ //move left
-      int currPos = getPositionBM();
-      int newPos = currPos + 5;
-      if( newPos <= 180){
-        leftBaseServo.write(newPos); 
-        rightBaseServo.write(newPos); 
-        delay(1000);
-      }//else no movement, at limit
-    }
-    else if(serialData == '6'){ //move right
-      int currPos = getPositionBM();
-      int newPos = currPos - 5;
-      if( newPos >= 0){
-        leftBaseServo.write(newPos);  
-        rightBaseServo.write(newPos);
-        delay(1000);
-      }//else no movement, at limit
-    }
-    else if (serialData == '7'){ //move servos to 180
-      leftBaseServo.write(180);
-      rightBaseServo.write(180);
-      delay(1000);
-    }
-    else if (serialData == '8'){
+    else if(serialData == 0x07){ // nod
       nod();
     }
-    //end else if serialData value
-    
-  } //end serial available
-  */
+    //base motor serials ****************************************
+    else if (serialData == 0x08){ // shake
+      /* TODO: Implement shake() once tabletop motor works */
+    }
+    else if(serialData == 0x09){ // tilt
+      tiltPortrait();
+    }
+  }
+  
 
 } //end loop
