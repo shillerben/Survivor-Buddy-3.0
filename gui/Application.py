@@ -43,8 +43,7 @@ class Application(tk.Frame):
         self.status_bar.pack(fill="x")
         
         self.master.config(menu=self.menu_bar)
-        
-        
+
     def create_menu(self, root_menu):
         # File Menu
         self.file_menu = tk.Menu(root_menu, tearoff=0)
