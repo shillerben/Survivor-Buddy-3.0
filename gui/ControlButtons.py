@@ -21,33 +21,15 @@ class ControlButtons(tk.Frame):
         self.top_frame = tk.Frame(self)
         self.top_frame.pack(fill="x")
         
-        '''
-        # Start/Shutdown button
-        self.start_shutdown_text = tk.StringVar()
-        self.start_shutdown_text.set("Start")
-        self.start_shutdown_btn = ttk.Button(self.top_frame, 
-            textvariable=self.start_shutdown_text, command=self.hello)
-        self.start_shutdown_btn.pack(side="left")
-        #self.start_shutdown_btn.grid(row=0, column=0)
-        '''
-        
-        # Open/Close Arm button
-        self.open_close_text = tk.StringVar()
-        self.open_close_text.set("Open Arm")
-        self.open_close_arm_btn = ttk.Button(self.top_frame,
-            textvariable=self.open_close_text, command=self.open_close_arm)
-        self.open_close_arm_btn.pack(side="left")
-        #self.open_close_arm_btn.grid(row=0, column=1)
-        
-        '''
-        # Portrait/Landscape button
-        self.portrait_landscape_text = tk.StringVar()
-        self.portrait_landscape_text.set("Change to Landscape")
-        self.portrait_landscape_btn = ttk.Button(self.top_frame,
-            textvariable=self.portrait_landscape_text, command=self.change_orientation)
-        self.portrait_landscape_btn.pack(side="left")
-        #self.portrait_landscape_btn.grid(row=0, column=2)
-        '''
+        # Open Arm button
+        self.open_arm_btn = ttk.Button(self.top_frame,
+            text="Open Arm", command=self.open_arm)
+        self.open_arm_btn.pack(side="left")
+
+        # Close Arm button
+        self.close_arm_btn = ttk.Button(self.top_frame,
+            text="Close Arm", command=self.close_arm)
+        self.close_arm_btn.pack(side="left")
         
         # Portrait button
         self.portrait_btn = ttk.Button(self.top_frame,
@@ -58,26 +40,23 @@ class ControlButtons(tk.Frame):
             text="Landscape", command=self.landscape)
         self.landscape_btn.pack(side="left")
         
-        # Head Tilt button
-        self.head_tilt_btn = ttk.Button(self.top_frame,
-            text="Tilt Head", command=self.tilt)
-        self.head_tilt_btn.pack(side="left")
-        #self.head_tilt_btn.grid(row=0, column=3)
-        
         self.bottom_frame = tk.Frame(self)
         self.bottom_frame.pack(fill="x")
+        
+        # Head Tilt button
+        self.head_tilt_btn = ttk.Button(self.bottom_frame,
+            text="Tilt Head", command=self.tilt)
+        self.head_tilt_btn.pack(side="left")
         
         # Nod Head button
         self.nod_head_btn = ttk.Button(self.bottom_frame,
             text="Nod Head", command=self.nod)
         self.nod_head_btn.pack(side="left")
-        #self.nod_head_btn.grid(row=1, column=0)
         
         # Shake Head button
         self.shake_head_btn = ttk.Button(self.bottom_frame,
             text="Shake Head", command=self.shake)
         self.shake_head_btn.pack(side="left")
-        #self.shake_head_btn.grid(row=1, column=1)
         
         '''
         # Emergency Shutdown button
@@ -101,20 +80,13 @@ class ControlButtons(tk.Frame):
                 self.open_close_text.set("Open Arm")
                 self.open_close_status = "CLOSED"
                 
-    '''
-    def change_orientation(self):
+    def open_arm(self):
         if self.serial_arm_controller.is_connected:
-            if self.orientation == "PORTRAIT":
-                print("Changing to landscape...")
-                self.serial_arm_controller.send("LANDSCAPE")
-                self.portrait_landscape_text.set("Change to Portrait")
-                self.orientation = "LANDSCAPE"
-            else:
-                print("Changing to portrait...")
-                self.serial_arm_controller.send("PORTRAIT")
-                self.portrait_landscape_text.set("Change to Landscape")
-                self.orientation = "PORTRAIT"
-    '''
+            self.serial_arm_controller.open_arm()
+
+    def close_arm(self):
+        if self.serial_arm_controller.is_connected:
+            self.serial_arm_controller.close_arm()
                 
     def portrait(self):
         if self.serial_arm_controller.is_connected:

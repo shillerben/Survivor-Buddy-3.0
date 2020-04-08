@@ -55,16 +55,11 @@ void landscape(){ //phoneMountServo moves phone to landscape position
     phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 40, true);
 }
 
-void tiltPortrait(){ //phoneMountServo moves phone to tilted position
-    phoneMountServo.write(PHONEMOUNT_TILT, 60, true);
-    delay(500);
-    phoneMountServo.write(PHONEMOUNT_PORTRAIT, 60, true);
-}
-
-void tiltLandscape(){ //phoneMountServo moves phone to tilted position
-    phoneMountServo.write(PHONEMOUNT_TILT, 60, true);
-    delay(500);
-    phoneMountServo.write(PHONEMOUNT_LANDSCAPE, 60, true);
+void tilt() {
+  int currAngle = phoneMountServo.read();
+  phoneMountServo.write(PHONEMOUNT_TILT, 60, true);
+  delay(500);
+  phoneMountServo.write(currAngle, 60, true);
 }
 
 /*
@@ -138,6 +133,8 @@ void down(){
 }
 void nod(){
   //up down, arm nods twice
+  int currAngleLeft = leftBaseServo.read();
+  int currAngleRight = rightBaseServo.read();
   leftBaseServo.write(LEFT_BASE_UP, 60);
   rightBaseServo.write(RIGHT_BASE_UP, 60);
   leftBaseServo.wait();
@@ -162,6 +159,8 @@ void nod(){
   rightBaseServo.write(RIGHT_BASE_UP, 60);
   leftBaseServo.wait();
   rightBaseServo.wait();
+  leftBaseServo.write(currAngleLeft, 60, true);
+  rightBaseServo.write(currAngleRight, 60, true);
 }
 /*******************************************************************/
 /*Turn Table Motor Functions*/
@@ -254,7 +253,7 @@ void loop() {
       shake();
     }
     else if(serialData[0] == 0x09){ // tilt
-      tiltPortrait();
+      tilt();
     }
   }
 } //end loop
