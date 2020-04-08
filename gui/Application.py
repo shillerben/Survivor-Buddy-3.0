@@ -34,10 +34,11 @@ class Application(tk.Frame):
         self.position_frame = PositionFrame(self, self.serial_arm_controller)
         self.position_frame.pack(fill="x")
         
-        self.control_buttons = ControlButtons(self, self.serial_arm_controller)
+        self.notifications_frame = NotificationFrame(self)
+
+        self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
         self.control_buttons.pack(fill="x")
         
-        self.notifications_frame = NotificationFrame(self)
         self.notifications_frame.pack(fill="x")
         
         self.status_bar.pack(fill="x")

@@ -12,6 +12,32 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+from threading import Thread
+import time
+
+
+class PositionUpdater(Thread):
+    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, **kwargs):
+        super().__init__(**kwargs)
+        self.serial_arm_controller = dev
+        self.pitch_control = _pitch_control
+        self.yaw_control = _yaw_control
+        self.roll_control = _roll_control
+
+    def run(self):
+        while True:
+            time.sleep(0.1)
+            self.serial_arm_controller.update_position()
+            pitch = self.serial_arm_controller.position.pitch
+            yaw = self.serial_arm_controller.position.yaw
+            roll = self.serial_arm_controller.position.roll
+            self.pitch_control.slider.set(pitch)
+            self.pitch_control.spinbox.set(pitch)
+            self.yaw_control.slider.set(yaw)
+            self.yaw_control.spinbox.set(yaw)
+            self.roll_control.slider.set(roll)
+            self.roll_control.spinbox.set(roll)
+
 
 class LabelScaleSpinbox(tk.Frame):
     def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, **kwargs):
@@ -51,7 +77,6 @@ class LabelScaleSpinbox(tk.Frame):
     def set_spinbox(self, event):
         self.current_value = self.slider.get()
         self.spinbox.set(str(round(self.current_value)))
-        #self.send_command()
         
     def sliderUpdate(self, val):
         print('Slider Update')
@@ -74,10 +99,8 @@ class LabelScaleSpinbox(tk.Frame):
             self.spinbox.set(str(round(self.current_value)))
             return False
         
-        
     def invalid_spinbox(self):
         print("Error: Position input must be a number between {} and {}".format(self.min, self.max))
-        
         
     def set_slider(self):
         try:
@@ -88,7 +111,6 @@ class LabelScaleSpinbox(tk.Frame):
         self.slider.set(val)
         self.current_value = val
         self.send_command()
-        #self.serial_arm_controller.recv()
     
     def send_command(self):
         if self.axis == 0:  #Pitch
@@ -157,4 +179,12 @@ class PositionFrame(tk.Frame):
         self.roll_control = LabelScaleSpinbox(
             master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller)
         self.roll_control.pack()
+
+        self.update_thread = PositionUpdater(
+            self.serial_arm_controller,
+            self.pitch_control,
+            self.yaw_control,
+            self.roll_control
+        )
+        self.update_thread.start()
         

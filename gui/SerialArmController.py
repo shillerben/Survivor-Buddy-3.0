@@ -75,9 +75,16 @@ class SerialArmController:
         
     def recv(self):
         if self.is_connected:
-            data = self._device.read()
+            data = self._device.read(3)
             print("Received: \"{}\"".format(data))
-            return self._device.read(256)
+            return data
+
+    def update_position(self):
+        pos = self.recv()
+        if pos:
+            self.position.pitch = int(pos[0])
+            self.position.yaw = int(pos[1])
+            self.position.roll = int(pos[2])
 
     def set_pitch(self, val):
         # val is one byte

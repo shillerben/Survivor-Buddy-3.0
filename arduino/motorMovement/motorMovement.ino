@@ -190,9 +190,18 @@ void setRoll(char val) {
   phoneMountServo.write(pos, 40, true);
 }
 
+void sendPosition() {
+  char pos[3]; // [pitch, yaw, roll]
+  pos[0] = map(rightBaseServo.read(), RIGHT_BASE_DOWN, RIGHT_BASE_UP, 0, 90);
+  pos[1] = map(turnTableServo.read(), 0, 180, TABLETOP_LEFT, TABLETOP_RIGHT);
+  pos[2] = map(phoneMountServo.read(), PHONEMOUNT_PORTRAIT, PHONEMOUNT_LANDSCAPE, 0, 90);
+  Serial.write(pos, 3);
+}
+
 /*******************************************************************/
 void setup() {
   Serial.begin(9600);
+  Serial.setTimeout(100);
 
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
@@ -215,8 +224,10 @@ void setup() {
 
 //Serial Data
 unsigned char serialData[128];
+unsigned long numLoops = 0;
 
 void loop() {
+  numLoops++;
   if (Serial.available() > 0) {//serial is reading stuff 
     Serial.readBytes(serialData, 2); 
     if (serialData[0] == 0x00) { // set pitch
@@ -256,4 +267,9 @@ void loop() {
       tilt();
     }
   }
+  if (numLoops % 100 == 0) {
+    sendPosition();
+    numLoops = 0;
+  }
+  delay(10);
 } //end loop

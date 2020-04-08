@@ -10,9 +10,10 @@ import tkinter.ttk as ttk
 
 
 class ControlButtons(tk.Frame):
-    def __init__(self, master, arm_controller, **kwargs):
+    def __init__(self, master, arm_controller, notifications, **kwargs):
         super().__init__(master, **kwargs)
         self.serial_arm_controller = arm_controller
+        self.notifications_frame = notifications
         self.open_close_status = "CLOSED"
         self.orientation = "PORTRAIT"
         self.create_buttons()
@@ -66,7 +67,7 @@ class ControlButtons(tk.Frame):
         #self.emergency_shutdown_btn.grid(row=1, column=2)
         '''
         
-        
+    '''
     def open_close_arm(self):
         if self.serial_arm_controller.is_connected:
             if self.open_close_status == "CLOSED":
@@ -79,40 +80,43 @@ class ControlButtons(tk.Frame):
                 self.serial_arm_controller.close_arm()
                 self.open_close_text.set("Open Arm")
                 self.open_close_status = "CLOSED"
+    '''
                 
     def open_arm(self):
         if self.serial_arm_controller.is_connected:
+            self.notifications_frame.append_line("Opening arm...")
             self.serial_arm_controller.open_arm()
 
     def close_arm(self):
         if self.serial_arm_controller.is_connected:
+            self.notifications_frame.append_line("Closing arm...")
             self.serial_arm_controller.close_arm()
                 
     def portrait(self):
         if self.serial_arm_controller.is_connected:
-            print("Changing to portrait...")
+            self.notifications_frame.append_line("Changing to portrait...")
             self.serial_arm_controller.portrait()
             self.orientation = "PORTRAIT"
                 
     def landscape(self):
         if self.serial_arm_controller.is_connected:
-            print("Changing to landscape...")
+            self.notifications_frame.append_line("Changing to landscape...")
             self.serial_arm_controller.landscape()
             self.orientation = "LANDSCAPE"
                 
     def tilt(self):
         if self.serial_arm_controller.is_connected:
-            print("Tilting head...")
+            self.notifications_frame.append_line("Tilting head...")
             self.serial_arm_controller.tilt()
             
     def nod(self):
         if self.serial_arm_controller.is_connected:
-            print("Nodding head...")
+            self.notifications_frame.append_line("Nodding head...")
             self.serial_arm_controller.nod()
             
     def shake(self):
         if self.serial_arm_controller.is_connected:
-            print("Shaking head...")
+            self.notifications_frame.append_line("Shaking head...")
             self.serial_arm_controller.shake()
         
     def hello(self):
