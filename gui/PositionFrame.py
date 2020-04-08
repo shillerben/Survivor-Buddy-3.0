@@ -143,7 +143,8 @@ class PositionFrame(tk.Frame):
         ax.quiver(0, 0, 0, 1, 1, 0, length=1.0)
 
         self.render_canvas = FigureCanvasTkAgg(fig, master)
-        self.render_canvas.get_tk_widget().grid(row=1,column=1,rowspan = 4)
+        self.render_canvas.get_tk_widget().pack()
+        #self.render_canvas.get_tk_widget().grid(row=1,column=1,rowspan = 4)
         
     def create_controls(self, master):
         self.pitch_control = LabelScaleSpinbox(

@@ -9,7 +9,7 @@ int rightBaseFeedback = A1;
 
 //360 servo
 int turnTablePin = 3;
-int turnTableFeedBack  = A3;
+int turnTableFeedback  = 11;
 
 //180 mini servo
 int phoneMountPin =6;
@@ -47,23 +47,6 @@ unsigned char serialData;
 
 enum Command {PITCH, YAW, ROLL, CLOSE, OPEN, PORTRAIT, 
               LANDSCAPE, NOD, SHAKE, TILT};
-
-/* put your setup code here, to run once: */
-void setup() {
-  Serial.begin(9600);
-
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
-  
-  // attaches the servo on pin to the servo object
-  leftBaseServo.attach(leftBasePin);  
-  leftBaseServo.write(LEFT_BASE_DOWN);
-  rightBaseServo.attach(rightBasePin);
-  rightBaseServo.write(RIGHT_BASE_DOWN);
-  turnTableServo.attach(turnTablePin);
-  phoneMountServo.attach(phoneMountPin);
-  phoneMountServo.write(PHONEMOUNT_PORTRAIT);
-}
 
 /*******************************************************************/
 /*Phone Mount Functions*/
@@ -105,6 +88,43 @@ int getPositionBM(){
   int potValRight = analogRead(rightBaseFeedback);
   int rightAngle = map(potValRight, RIGHT_BASE_FB_DOWN, RIGHT_BASE_FB_UP, 0, 90);
   return rightAngle;
+}
+
+// 360 parallax constants
+const int unitsFC = 360; // 360 degrees in a circle
+const int dcMin = 29;
+const int dcMax = 971;
+const int dutyScale = 1;
+// not constants, but don't want to have to declare them a lot
+unsigned long tCycle, tHigh, tLow, dc;
+unsigned int theta;
+
+int getPositionTabletop(){
+  int tCycle = 0;
+  int tHigh, tLow, theta, dc;
+  while (1) {
+    tHigh = pulseIn(turnTableFeedback, HIGH);
+    tLow = pulseIn(turnTableFeedback, LOW);
+    tCycle = tHigh + tLow;
+    Serial.print("tHigh: ");
+    Serial.println(tHigh);
+    Serial.print("tLow: ");
+    Serial.println(tLow);
+    Serial.print("tCycle: ");
+    Serial.println(tCycle);
+    if ((tCycle > 1000) && (tCycle < 1200)) {
+      break;
+    }
+  }
+  dc = (dutyScale * tHigh) / tCycle;
+  theta = (unitsFC - 1) - ((dc - dcMin) * unitsFC) / (dcMax - dcMin + 1);
+  if (theta < 0) {
+    theta = 0;
+  }
+  else if (theta > (unitsFC - 1)) {
+    theta = unitsFC - 1;
+  }
+  return theta;
 }
 
 void close_(){
@@ -180,19 +200,45 @@ void shutdown(){
 }
 
 void test() {
+  /*
+  Serial.println("TESTING...");
   up();
-  tiltPortrait();
+  Serial.println(getPositionTabletop());
+  */
+//  tHigh = pulseIn(turnTableFeedback, HIGH);
+//  Serial.println(tHigh);
+  turnTableServo.write(90);
   delay(1000);
-  landscape();
-  delay(1000);
-  tiltLandscape();
-  delay(1000);
-  portrait();
-  delay(1000);
+  turnTableServo.write(115);
+  delay(50);
+  turnTableServo.write(65);
+  delay(50);
+  turnTableServo.write(90);
 }
 
 /*******************************************************************/
-/* put your main code here, to run repeatedly: */
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+
+  // feedback pins
+  pinMode(leftBaseFeedback, INPUT);
+  pinMode(rightBaseFeedback, INPUT);
+  pinMode(turnTableFeedback, INPUT);
+  pinMode(phoneMountFeedback, INPUT);
+  
+  // attaches the servo on pin to the servo object
+  leftBaseServo.attach(leftBasePin);  
+  leftBaseServo.write(LEFT_BASE_UP);
+  rightBaseServo.attach(rightBasePin);
+  rightBaseServo.write(RIGHT_BASE_UP);
+  turnTableServo.attach(turnTablePin);
+  phoneMountServo.attach(phoneMountPin);
+  phoneMountServo.write(PHONEMOUNT_PORTRAIT);
+}
+
 void loop() {
   //test();
   
@@ -217,12 +263,10 @@ void loop() {
     }
     //base motor serials ****************************************
     else if (serialData == 0x08){ // shake
-      /* TODO: Implement shake() once tabletop motor works */
+      shake();
     }
     else if(serialData == 0x09){ // tilt
       tiltPortrait();
     }
   }
-  
-
 } //end loop
