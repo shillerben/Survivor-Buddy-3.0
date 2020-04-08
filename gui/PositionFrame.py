@@ -144,7 +144,6 @@ class PositionFrame(tk.Frame):
 
         self.render_canvas = FigureCanvasTkAgg(fig, master)
         self.render_canvas.get_tk_widget().pack()
-        #self.render_canvas.get_tk_widget().grid(row=1,column=1,rowspan = 4)
         
     def create_controls(self, master):
         self.pitch_control = LabelScaleSpinbox(
@@ -152,10 +151,10 @@ class PositionFrame(tk.Frame):
         self.pitch_control.pack()
         
         self.yaw_control = LabelScaleSpinbox(
-            master, text="Yaw: ", from_=-180, to=180, axis=1, dev=self.serial_arm_controller)
+            master, text="Yaw: ", from_=-90, to=90, axis=1, dev=self.serial_arm_controller)
         self.yaw_control.pack()
         
         self.roll_control = LabelScaleSpinbox(
-            master, text="Roll: ", from_=-90, to=90, axis=2, dev=self.serial_arm_controller)
+            master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller)
         self.roll_control.pack()
         

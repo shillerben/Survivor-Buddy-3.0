@@ -18,8 +18,8 @@ int phoneMountFeedback = A4;
 int ledPin = 2;
 
 // Position constants
-const int RIGHT_BASE_DOWN = 40;
-const int RIGHT_BASE_UP = 125;
+const int RIGHT_BASE_DOWN = 45;
+const int RIGHT_BASE_UP = 123;
 const int LEFT_BASE_DOWN = 150;
 const int LEFT_BASE_UP = 65;
 const int PHONEMOUNT_LANDSCAPE = 7;
@@ -41,9 +41,6 @@ VarSpeedServo leftBaseServo;
 VarSpeedServo rightBaseServo;
 VarSpeedServo turnTableServo;
 VarSpeedServo phoneMountServo; 
-
-//Serial Data
-unsigned char serialData;
 
 enum Command {PITCH, YAW, ROLL, CLOSE, OPEN, PORTRAIT, 
               LANDSCAPE, NOD, SHAKE, TILT};
@@ -127,10 +124,6 @@ int getPositionTabletop(){
   return theta;
 }
 
-void close_(){
-  // front, portrait, then down
-}
-
 void up(){
   leftBaseServo.write(LEFT_BASE_UP, 40);
   rightBaseServo.write(RIGHT_BASE_UP, 40);
@@ -176,44 +169,26 @@ void shake(){
   //move left and right
 }
 
-/*******************************************************************/
-
-/*
- * Zero all motors
- * Return all motors to 0 pos
- * Phonemount to portrait mode (90 pos)
-*/
-void homeServos(){
-  //Reset all servos to position 0
-  close_(); 
-}
 /*Emergency Shut Down*/
 void emergencyShutdown(){
   //stop all motor movement. will need to unplug and plug back in to move again
   while(true) {}
 }
 
-/*Normal Shut Down*/
-void shutdown(){
-  //need to make sure all other motors are in correct postion to close
-//close arm all the way
+void setPitch(char val) {
+  int leftVal = map(val, 0, 90, LEFT_BASE_DOWN, LEFT_BASE_UP);
+  int rightVal = map(val, 0, 90, RIGHT_BASE_DOWN, RIGHT_BASE_UP);
+  leftBaseServo.write(leftVal, 40);
+  rightBaseServo.write(rightVal, 40);
 }
 
-void test() {
-  /*
-  Serial.println("TESTING...");
-  up();
-  Serial.println(getPositionTabletop());
-  */
-//  tHigh = pulseIn(turnTableFeedback, HIGH);
-//  Serial.println(tHigh);
-  turnTableServo.write(90);
-  delay(1000);
-  turnTableServo.write(115);
-  delay(50);
-  turnTableServo.write(65);
-  delay(50);
-  turnTableServo.write(90);
+void setYaw(char val) {
+  
+}
+
+void setRoll(char val) {
+  int pos = map(val, 0, 90, PHONEMOUNT_PORTRAIT, PHONEMOUNT_LANDSCAPE);
+  phoneMountServo.write(pos, 40, true);
 }
 
 /*******************************************************************/
@@ -231,41 +206,54 @@ void setup() {
   
   // attaches the servo on pin to the servo object
   leftBaseServo.attach(leftBasePin);  
-  leftBaseServo.write(LEFT_BASE_UP);
+  leftBaseServo.write(LEFT_BASE_DOWN, 60, true);
   rightBaseServo.attach(rightBasePin);
-  rightBaseServo.write(RIGHT_BASE_UP);
+  rightBaseServo.write(RIGHT_BASE_DOWN, 60, true);
   turnTableServo.attach(turnTablePin);
   phoneMountServo.attach(phoneMountPin);
   phoneMountServo.write(PHONEMOUNT_PORTRAIT);
 }
 
-void loop() {
-  //test();
-  
-  if (Serial.available() > 0) {//serial is reading stuff 
-    serialData = Serial.read(); 
+//Serial Data
+unsigned char serialData[128];
 
-    if(serialData == 0x03){ // close 
+void loop() {
+  if (Serial.available() > 0) {//serial is reading stuff 
+    Serial.readBytes(serialData, 2); 
+    if (serialData[0] == 0x00) { // set pitch
+      if (0 <= serialData[1] && serialData[1] <= 90) {
+        setPitch(serialData[1]);
+      }
+    }
+    else if (serialData[0] == 0x01) { // set yaw
+      if (0 <= serialData[1] && serialData[1] <= 180) {
+        setYaw(serialData[1]);
+      }
+    }
+    else if (serialData[0] == 0x02) { // set roll
+      if (0 <= serialData[1] && serialData[1] <= 90) {
+        setRoll(serialData[1]);
+      }
+    }
+    else if(serialData[0] == 0x03){ // close 
       down();
     }
-    //phone mount serials ****************************************
-    else if (serialData == 0x04){ // open
+    else if (serialData[0] == 0x04){ // open
       up();
     }
-    else if(serialData == 0x05){ // portrait
+    else if(serialData[0] == 0x05){ // portrait
       portrait();
     }
-    else if (serialData == 0x06){ // landscape
+    else if (serialData[0] == 0x06){ // landscape
       landscape();
     } 
-    else if(serialData == 0x07){ // nod
+    else if(serialData[0] == 0x07){ // nod
       nod();
     }
-    //base motor serials ****************************************
-    else if (serialData == 0x08){ // shake
+    else if (serialData[0] == 0x08){ // shake
       shake();
     }
-    else if(serialData == 0x09){ // tilt
+    else if(serialData[0] == 0x09){ // tilt
       tiltPortrait();
     }
   }

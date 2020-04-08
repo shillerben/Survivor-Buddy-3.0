@@ -9,7 +9,7 @@ from serial.tools import list_ports
 import serial
 
 ARDUINO_VID  = 0x2341
-UNO_PID      = 0x0001
+UNO_PID      = 0x0043
 LEONARDO_PID = 0x8036
 
 class Command():
@@ -71,8 +71,7 @@ class SerialArmController:
     def send(self, data):
         if self.is_connected:
             print("Sending: \"{}\"".format(data))
-            self._device.write(data.to_bytes(1, 'little'))
-            self.recv()
+            self._device.write(data)
         
     def recv(self):
         if self.is_connected:
@@ -80,62 +79,44 @@ class SerialArmController:
             print("Received: \"{}\"".format(data))
             return self._device.read(256)
 
-    def get_position(self):
-        if self.is_connected:
-            print("Called get_position()...")
-            self.send("POS")
-            response = self.recv()
-            print("Received: {}".format(response))
-        
-    def set_position(self, position):
-        if self.is_connected:
-            print("Called set_position({})...".format(str(position)))
-            data = str(position)
-            self.send(data)
-            
     def set_pitch(self, val):
         # val is one byte
         if self.is_connected:
-            self.send(Command.PITCH)
-            self.send(val)
+            self.send(bytes((Command.PITCH, val)))
             
     def set_yaw(self, val):
-        # val is 2 bytes: 0 to 360
+        # val is 1 byte
         if self.is_connected:
-            self.send(Command.YAW)
-            # send higher byte first, then lower
-            self.send((val & 0xff00) >> 8)
-            self.send(val & 0x00ff)
+            self.send(bytes((Command.YAW, val + 90)))
             
     def set_roll(self, val):
         # val is one byte
         if self.is_connected:
-            self.send(Command.ROLL)
-            self.send(val)
+            self.send(bytes((Command.ROLL, val)))
             
     def close_arm(self):
-        self.send(Command.CLOSE)
+        self.send(bytes((Command.CLOSE, 0)))
         
     def open_arm(self):
-        self.send(Command.OPEN)
+        self.send(bytes((Command.OPEN, 0)))
         
     def portrait(self):
         if self.is_connected:
-            self.send(Command.PORTRAIT)
+            self.send(bytes((Command.PORTRAIT, 0)))
                 
     def landscape(self):
         if self.is_connected:
-            self.send(Command.LANDSCAPE)
+            self.send(bytes((Command.LANDSCAPE, 0)))
                 
     def tilt(self):
         if self.is_connected:
-            self.send(Command.TILT)
+            self.send(bytes((Command.TILT, 0)))
             
     def nod(self):
         if self.is_connected:
-            self.send(Command.NOD)
+            self.send(bytes((Command.NOD, 0)))
             
     def shake(self):
         if self.is_connected:
-            self.send(Command.SHAKE)
+            self.send(bytes((Command.SHAKE, 0)))
         

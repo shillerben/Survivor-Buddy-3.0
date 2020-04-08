@@ -62,52 +62,12 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   // read the data from USB
-  u_char data;
-  u_char val1;
-  u_char val2;
+  char data[2];
   if (Serial.available() > 0) {
-    data = Serial.read();
-
-    switch(data) {
-      case PITCH:
-        val1 = Serial.read();
-        set_pitch(val1);
-        break;
-      case YAW:
-        val1 = Serial.read(); // higher byte
-        val2 = Serial.read(); // lower byte
-        set_yaw((val1 << 8) | val2);
-        break;
-      case ROLL:
-        val1 = Serial.read();
-        set_roll(val1);
-        break;
-      case CLOSE:
-        close_();
-        break;
-      case OPEN:
-        open_();
-        break;
-      case PORTRAIT:
-        portrait();
-        break;
-      case LANDSCAPE:
-        landscape();
-        break;
-      case NOD:
-        nod();
-        break;
-      case SHAKE:
-        shake();
-        break;
-      case TILT:
-        tilt();
-        break;
-    }
-    //Serial.print(data);
+    Serial.readBytes(data, 2);
   }
-  
-  //delay(1);        // delay in between reads for stability
+  Serial.print(data);
+  delay(1);        // delay in between reads for stability
 }
 
 void set_pitch(u_char val) {
