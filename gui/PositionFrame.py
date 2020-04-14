@@ -14,19 +14,22 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from threading import Thread
 import time
+import queue
 
 class PositionUpdater(Thread):
-    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _pos_render, **kwargs):
+    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _render_queue, **kwargs):
         super().__init__(**kwargs)
         self.serial_arm_controller = dev
         self.pitch_control = _pitch_control
         self.yaw_control = _yaw_control
         self.roll_control = _roll_control
-        self.pos_render = _pos_render
+        self.render_queue = _render_queue
 
     def run(self):
+        yaw = 0
+        pitch = 0
+        roll = 0
         while True:
-            time.sleep(0.1)
             if self.serial_arm_controller.is_connected: #If else to allow testing of GUI without connected arm
                 self.serial_arm_controller.update_position()
                 self.pitch_control.slider.set(pitch)
@@ -43,9 +46,10 @@ class PositionUpdater(Thread):
                 pitch = self.pitch_control.spinbox.get()
                 yaw = self.yaw_control.spinbox.get()
                 roll = self.roll_control.spinbox.get()
-                
-            # self.pos_render.update_render()   #NEEDS FIXING
-            
+            if (self.render_queue.empty()):   #Only add to queue if queue is empty, otherwise will fill with values, getting out of sync with render and memory leak
+                self.render_queue.put(yaw)
+            time.sleep(0.1)
+
 
 class LabelScaleSpinbox(tk.Frame):
     def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, **kwargs):
@@ -120,12 +124,8 @@ class LabelScaleSpinbox(tk.Frame):
         self.send_command()
     
     def send_command(self):
-        if self.axis == 0:  #Pitch
-            self.serial_arm_controller.set_pitch(self.current_value) if self.serial_arm_controller.is_connected else print('Device Disconnected')
-        elif self.axis == 1:    #Yaw
-            self.serial_arm_controller.set_yaw(self.current_value) if self.serial_arm_controller.is_connected else print('Device Disconnected')
-        elif self.axis == 2:    #Roll
-            self.serial_arm_controller.set_roll(self.current_value) if self.serial_arm_controller.is_connected else print('Device Disconnected')   
+        if self.serial_arm_controller.is_connected:
+            self.serial_arm_controller.set_pitch(self.current_value)
         
 
 class RenderDiagram(tk.Frame): 
@@ -141,6 +141,12 @@ class RenderDiagram(tk.Frame):
         self.fig = plt.figure(figsize=(3,3))
         self.ax = self.fig.gca(projection='3d')
 
+        self.draw_axes() #Split into separate function, as axes must be redrawn each frame
+
+        self.render_canvas = FigureCanvasTkAgg(self.fig, master)
+        self.render_canvas.get_tk_widget().pack()
+    
+    def draw_axes(self):
         # Remove unneccesary information from plot
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
@@ -154,18 +160,14 @@ class RenderDiagram(tk.Frame):
         self.ax.set_ylim(bottom=-2, top=2, emit=True, auto=False)
         self.ax.set_zlim(bottom=-2, top=2, emit=True, auto=False)
 
-        self.render_canvas = FigureCanvasTkAgg(self.fig, master)
-        self.render_canvas.get_tk_widget().pack()
-    
-    def update_render(self):    #Should add an arbitrary line to render, would change to be accurate to position, but line does not appear
-        # print('Update Render\n')
-        self.ax.quiver(0, 0, 0, 1, 2, 3, length=10.0, arrow_length_ratio=0)
+    def update_render(self, master, yaw, pitch, roll):   #will implement if I can figure out how to update plot
+        self.ax.clear() #clear old data
+        self.draw_axes()    #redraw axes
+        self.ax.quiver(0, 0, 0, yaw, 2, 3, length=10.0, arrow_length_ratio=0)
+        self.render_canvas.draw()
 
-    # def update_yaw(self, newYaw):   #will implement if I can figure out how to update plot
-
-    # def update_pitch(self, newPitch):
-
-    # def update_roll(self, newRoll):
+    def delete_render(self):
+        plt.close()
 
 class PositionFrame(tk.Frame):
     def __init__(self, master, arm_controller, **kwargs):
@@ -181,7 +183,12 @@ class PositionFrame(tk.Frame):
         self.control_frame.pack(side="left")
         self.create_controls(self.control_frame)
 
+        self.render_queue = queue.LifoQueue()
+
         self.create_updater()
+        self.frame_master = self.render_frame    #s.t. master does not have to be passed to process queue
+        self.master.after(100, self.process_queue)
+
         
     def create_render(self, master):    
         self.pos_render = RenderDiagram(
@@ -208,8 +215,14 @@ class PositionFrame(tk.Frame):
             self.pitch_control,
             self.yaw_control,
             self.roll_control,
-            self.pos_render
+            self.render_queue
         )
         self.update_thread.start()
+
+    def process_queue(self):
+        if(not self.render_queue.empty()):
+            msg = self.render_queue.get(0)
+            self.pos_render.update_render(self.frame_master, msg, 0, 0)
+        self.master.after(50, self.process_queue)
 
         
