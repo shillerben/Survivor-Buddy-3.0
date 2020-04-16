@@ -34,16 +34,15 @@ class PositionUpdater(Thread):
         while True:
             if self.serial_arm_controller.is_connected: #If else to allow testing of GUI without connected arm
                 self.serial_arm_controller.update_position()
+                pitch = self.serial_arm_controller.position.pitch
+                yaw = self.serial_arm_controller.position.yaw
+                roll = self.serial_arm_controller.position.roll
                 self.pitch_control.slider.set(pitch)
                 self.pitch_control.spinbox.set(pitch)
                 self.yaw_control.slider.set(yaw)
                 self.yaw_control.spinbox.set(yaw)
                 self.roll_control.slider.set(roll)
                 self.roll_control.spinbox.set(roll)
-
-                pitch = self.serial_arm_controller.position.pitch
-                yaw = self.serial_arm_controller.position.yaw
-                roll = self.serial_arm_controller.position.roll
             else:
                 pitch = self.pitch_control.spinbox.get()
                 yaw = self.yaw_control.spinbox.get()
