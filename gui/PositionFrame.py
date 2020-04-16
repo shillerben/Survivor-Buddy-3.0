@@ -165,6 +165,7 @@ class RenderDiagram(tk.Frame):
         self.ax.set_xlim(left=-2, right=2, emit=True, auto=False)
         self.ax.set_ylim(bottom=-2, top=2, emit=True, auto=False)
         self.ax.set_zlim(bottom=0, top=4, emit=True, auto=False)
+        self.ax.set_xlabel('FRONT')
 
     def update_render(self, master, new_yaw, new_pitch, new_roll):   #will implement if I can figure out how to update plot
         self.ax.clear() #clear old data
@@ -173,18 +174,18 @@ class RenderDiagram(tk.Frame):
         pitch = float(new_pitch) * np.pi / 180
         roll = float(new_roll) * np.pi / 180
 
-        self.ax.quiver(0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#4f0308') #Arm wireframe
-        self.ax.quiver(-0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#4f0308')
-        self.ax.quiver(0.2, 0, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#4f0308')
-        self.ax.quiver(0.2, -np.cos(pitch)*2, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#4f0308')
+        self.ax.quiver(0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
+        self.ax.quiver(-0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, 0, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, -np.cos(pitch)*2, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
 
-        self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#03094f') #Vector of phone direction
+        self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
         
         # self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, -np.cos(roll), np.sin(pitch + np.pi) * np.cos(roll), np.cos(pitch + np.pi) * np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#FF094f') #Vector of phone orientation
 
-        self.ax.quiver(-2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0.25, color = '#727985') # pitch "shadow"
-        self.ax.quiver(0, 0, 0, -np.sin(yaw), -np.cos(yaw), 0, length=2, arrow_length_ratio=0.25, color = '#727985') # yaw "shadow"
-        self.ax.quiver(0, 2, 0, -np.cos(roll), 0 , np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#727985') #roll "shadow"
+        # self.ax.quiver(-2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0.25, color = '#727985') # pitch "shadow"
+        # self.ax.quiver(0, 0, 0, -np.sin(yaw), -np.cos(yaw), 0, length=2, arrow_length_ratio=0.25, color = '#727985') # yaw "shadow"
+        # self.ax.quiver(0, 2, 0, -np.cos(roll), 0 , np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#727985') #roll "shadow"
 
         self.render_canvas.draw()
 
