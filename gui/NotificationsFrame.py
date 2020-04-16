@@ -7,6 +7,7 @@ Created on Thu Feb 27 13:27:15 2020
 
 import tkinter as tk
 import tkinter.ttk as ttk
+from datetime import datetime
 
 class NotificationFrame(tk.Frame):
     def __init__(self, master, _logFile, **kwargs):
@@ -29,7 +30,9 @@ class NotificationFrame(tk.Frame):
     def append_line(self, line):
         self.text.config(state=tk.NORMAL)
         self.text.insert(tk.END, line + "\n")
-        self.logFile.write(line + "\n") #Print notification to external log file
+        now = datetime.now()
+        timestamp = now.strftime("%H:%M:%S")
+        self.logFile.write(timestamp + " - " + line + "\n") #Print notification to external log file
         self.text.see(tk.END)   #Scrolls down to show latest notification automatically
         self.text.config(state=tk.DISABLED)
         

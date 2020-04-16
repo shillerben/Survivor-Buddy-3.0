@@ -196,8 +196,8 @@ class RenderDiagram(tk.Frame):
 
         self.ax.quiver(0, -np.cos(pitch)*1.75 + 1, np.sin(pitch)*1.75, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=2.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
 
-        self.ax.quiver(0.5, -np.cos(pitch)*2.5 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*2.5 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
-        self.ax.quiver(0.5, -np.cos(pitch)*1 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*1 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
+        # self.ax.quiver(0.5, -np.cos(pitch)*2.5 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*2.5 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
+        # self.ax.quiver(0.5, -np.cos(pitch)*1 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*1 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
         
         # self.ax.quiver(-2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0.25, color = '#727985') # pitch "shadow"
         # self.ax.quiver(0, 0, 0, -np.sin(yaw), -np.cos(yaw), 0, length=2, arrow_length_ratio=0.25, color = '#727985') # yaw "shadow"

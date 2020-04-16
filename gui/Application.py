@@ -29,9 +29,7 @@ class Application(tk.Frame):
         
         now = datetime.now()    #Create unique logfile for notifications and errors
         timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
-        file_name = 'LOGFILE_' + timestamp +'.txt'
-        # self.logFile = open(file_name, 'w+')
-        
+        file_name = 'LOGFILE_' + timestamp +'.txt'        
         self.logFile = open(os.path.join(os.path.realpath('../logs/'), file_name) , 'w+')   #Save logfile to log folder
 
         self.create_widgets()
