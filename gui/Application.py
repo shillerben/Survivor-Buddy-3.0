@@ -32,7 +32,7 @@ class Application(tk.Frame):
         file_name = 'LOGFILE_' + timestamp +'.txt'
         # self.logFile = open(file_name, 'w+')
         
-        self.logFile = open(os.path.join(os.path.realpath('../gui/logs/'), file_name) , 'w+')   #Save logfile to log folder
+        self.logFile = open(os.path.join(os.path.realpath('../logs/'), file_name) , 'w+')   #Save logfile to log folder
 
         self.create_widgets()
         
