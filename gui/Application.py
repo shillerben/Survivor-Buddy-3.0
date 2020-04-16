@@ -12,6 +12,8 @@ from ControlButtons import ControlButtons
 from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
 from SerialArmController import SerialArmController
+from datetime import datetime   #For log file formatting
+import os.path
 
 
 class Application(tk.Frame):
@@ -24,6 +26,14 @@ class Application(tk.Frame):
         # need the status bar to give to the arm controller
         self.status_bar = StatusBar(self)
         self.serial_arm_controller = SerialArmController(self.status_bar)
+        
+        now = datetime.now()    #Create unique logfile for notifications and errors
+        timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
+        file_name = 'LOGFILE_' + timestamp +'.txt'
+        # self.logFile = open(file_name, 'w+')
+        
+        self.logFile = open(os.path.join(os.path.realpath('../gui/logs/'), file_name) , 'w+')   #Save logfile to log folder
+
         self.create_widgets()
         
         
@@ -34,7 +44,7 @@ class Application(tk.Frame):
         self.position_frame = PositionFrame(self, self.serial_arm_controller)
         self.position_frame.pack(fill="x")
         
-        self.notifications_frame = NotificationFrame(self)
+        self.notifications_frame = NotificationFrame(self, self.logFile)
 
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
         self.control_buttons.pack(fill="x")
@@ -45,11 +55,15 @@ class Application(tk.Frame):
         
         self.master.config(menu=self.menu_bar)
 
+    def close_app(self):    #Had to make new quit function to close file
+        self.logFile.close()
+        self.quit()
+
     def create_menu(self, root_menu):
         # File Menu
         self.file_menu = tk.Menu(root_menu, tearoff=0)
         #self.file_menu.add_command(label="Preferences", command=self.hello)
-        self.file_menu.add_command(label="Quit", command=self.quit)
+        self.file_menu.add_command(label="Quit", command=self.close_app)
         root_menu.add_cascade(label="File", menu=self.file_menu)
         
         # Device Menu

@@ -86,38 +86,52 @@ class ControlButtons(tk.Frame):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Opening arm...")
             self.serial_arm_controller.open_arm()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Opening arm...") #For offline testing
 
     def close_arm(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Closing arm...")
             self.serial_arm_controller.close_arm()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Closing arm...") #For offline testing
                 
     def portrait(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Changing to portrait...")
             self.serial_arm_controller.portrait()
             self.orientation = "PORTRAIT"
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Changing to portrait...") #For offline testing
                 
     def landscape(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Changing to landscape...")
             self.serial_arm_controller.landscape()
             self.orientation = "LANDSCAPE"
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Changing to landscape...") #For offline testing
                 
     def tilt(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Tilting head...")
             self.serial_arm_controller.tilt()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Tilting head...") #For offline testing
             
     def nod(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Nodding head...")
             self.serial_arm_controller.nod()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Nodding head...") #For offline testing
             
     def shake(self):
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Shaking head...")
             self.serial_arm_controller.shake()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Shaking head...") #For offline testing
         
     def hello(self):
         print("Hello from ControlButtons")

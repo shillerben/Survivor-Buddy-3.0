@@ -9,9 +9,10 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 class NotificationFrame(tk.Frame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, _logFile, **kwargs):
         super().__init__(master, **kwargs)
         
+        self.logFile = _logFile
         self.label = ttk.Label(self, text="Notifications")
         self.label.pack()
         #self.label.grid(row=0, rowspan=1, sticky="w")
@@ -28,6 +29,9 @@ class NotificationFrame(tk.Frame):
     def append_line(self, line):
         self.text.config(state=tk.NORMAL)
         self.text.insert(tk.END, line + "\n")
+        self.logFile.write(line + "\n") #Print notification to external log file
+        self.text.see(tk.END)   #Scrolls down to show latest notification automatically
         self.text.config(state=tk.DISABLED)
+        
         
         
