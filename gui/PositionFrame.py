@@ -162,6 +162,19 @@ class RenderDiagram(tk.Frame):
         # self.ax.quiver(-2, 0, 0, 4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#cf685d') #red, left-right
         # self.ax.quiver(0, -2, 0, 0, 4, 0, length=1.0, arrow_length_ratio=0, color = '#5d5fcf') #blue, front-back
         # self.ax.quiver(0, 0, 0, 0, 0, 4, length=1.0, arrow_length_ratio=0, color = '#6ad15e') #green, height
+
+        self.ax.quiver(-1, 1.25, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(1, 1.25, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+
+        self.ax.quiver(-0.4, 1.25, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(0.4, 1.25, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+
+        self.ax.quiver(1, 1.25, 0, -0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(-1, 1.25, 0, 0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(0.4, 0.25, 0, -0.8, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+
+        self.ax.quiver(1, -1.75, 0, -2, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+
         self.ax.set_xlim(left=-2, right=2, emit=True, auto=False)
         self.ax.set_ylim(bottom=-2, top=2, emit=True, auto=False)
         self.ax.set_zlim(bottom=0, top=4, emit=True, auto=False)
@@ -174,12 +187,12 @@ class RenderDiagram(tk.Frame):
         pitch = float(new_pitch) * np.pi / 180
         roll = float(new_roll) * np.pi / 180
 
-        self.ax.quiver(0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
-        self.ax.quiver(-0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32')
-        self.ax.quiver(0.2, 0, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
-        self.ax.quiver(0.2, -np.cos(pitch)*2, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
+        self.ax.quiver(-0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, 1, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, -np.cos(pitch)*2 + 1, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
 
-        self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
+        self.ax.quiver(0, -np.cos(pitch)*2 + 1, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
         
         # self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, -np.cos(roll), np.sin(pitch + np.pi) * np.cos(roll), np.cos(pitch + np.pi) * np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#FF094f') #Vector of phone orientation
 
