@@ -17,13 +17,15 @@ import time
 import queue
 
 class PositionUpdater(Thread):
-    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _render_queue, **kwargs):
+    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _yaw_queue, _pitch_queue, _roll_queue, **kwargs):
         super().__init__(**kwargs)
         self.serial_arm_controller = dev
         self.pitch_control = _pitch_control
         self.yaw_control = _yaw_control
         self.roll_control = _roll_control
-        self.render_queue = _render_queue
+        self.yaw_queue = _yaw_queue
+        self.pitch_queue = _pitch_queue
+        self.roll_queue = _roll_queue
 
     def run(self):
         yaw = 0
@@ -46,8 +48,12 @@ class PositionUpdater(Thread):
                 pitch = self.pitch_control.spinbox.get()
                 yaw = self.yaw_control.spinbox.get()
                 roll = self.roll_control.spinbox.get()
-            if (self.render_queue.empty()):   #Only add to queue if queue is empty, otherwise will fill with values, getting out of sync with render and memory leak
-                self.render_queue.put(yaw)
+            if (self.yaw_queue.empty()):   #Only add to queue if queue is empty, otherwise will fill with values, getting out of sync with render and memory leak
+                self.yaw_queue.put(yaw)
+            if (self.pitch_queue.empty()):
+                self.pitch_queue.put(pitch)
+            if (self.roll_queue.empty()):
+                self.roll_queue.put(roll)
             time.sleep(0.1)
 
 
@@ -153,17 +159,33 @@ class RenderDiagram(tk.Frame):
         self.ax.set_zticklabels([])
 
         # Draw x, y and z axes to make plot easier to read, set plot size
-        self.ax.quiver(-2, 0, 0, 4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#cf685d')
-        self.ax.quiver(0, -2, 0, 0, 4, 0, length=1.0, arrow_length_ratio=0, color = '#5d5fcf')
-        self.ax.quiver(0, 0, -2, 0, 0, 4, length=1.0, arrow_length_ratio=0, color = '#6ad15e')
+        # self.ax.quiver(-2, 0, 0, 4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#cf685d') #red, left-right
+        # self.ax.quiver(0, -2, 0, 0, 4, 0, length=1.0, arrow_length_ratio=0, color = '#5d5fcf') #blue, front-back
+        # self.ax.quiver(0, 0, 0, 0, 0, 4, length=1.0, arrow_length_ratio=0, color = '#6ad15e') #green, height
         self.ax.set_xlim(left=-2, right=2, emit=True, auto=False)
         self.ax.set_ylim(bottom=-2, top=2, emit=True, auto=False)
-        self.ax.set_zlim(bottom=-2, top=2, emit=True, auto=False)
+        self.ax.set_zlim(bottom=0, top=4, emit=True, auto=False)
 
-    def update_render(self, master, yaw, pitch, roll):   #will implement if I can figure out how to update plot
+    def update_render(self, master, new_yaw, new_pitch, new_roll):   #will implement if I can figure out how to update plot
         self.ax.clear() #clear old data
         self.draw_axes()    #redraw axes
-        self.ax.quiver(0, 0, 0, yaw, 2, 3, length=10.0, arrow_length_ratio=0)
+        yaw = float(new_yaw) * np.pi / 180  #Convert angles to radians
+        pitch = float(new_pitch) * np.pi / 180
+        roll = float(new_roll) * np.pi / 180
+
+        self.ax.quiver(0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#4f0308') #Arm wireframe
+        self.ax.quiver(-0.2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#4f0308')
+        self.ax.quiver(0.2, 0, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#4f0308')
+        self.ax.quiver(0.2, -np.cos(pitch)*2, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#4f0308')
+
+        self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#03094f') #Vector of phone direction
+        
+        # self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, -np.cos(roll), np.sin(pitch + np.pi) * np.cos(roll), np.cos(pitch + np.pi) * np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#FF094f') #Vector of phone orientation
+
+        self.ax.quiver(-2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0.25, color = '#727985') # pitch "shadow"
+        self.ax.quiver(0, 0, 0, -np.sin(yaw), -np.cos(yaw), 0, length=2, arrow_length_ratio=0.25, color = '#727985') # yaw "shadow"
+        self.ax.quiver(0, 2, 0, -np.cos(roll), 0 , np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#727985') #roll "shadow"
+
         self.render_canvas.draw()
 
     def delete_render(self):
@@ -183,7 +205,9 @@ class PositionFrame(tk.Frame):
         self.control_frame.pack(side="left")
         self.create_controls(self.control_frame)
 
-        self.render_queue = queue.LifoQueue()
+        self.yaw_queue = queue.LifoQueue()
+        self.pitch_queue = queue.LifoQueue()
+        self.roll_queue = queue.LifoQueue()
 
         self.create_updater()
         self.frame_master = self.render_frame    #s.t. master does not have to be passed to process queue
@@ -215,14 +239,18 @@ class PositionFrame(tk.Frame):
             self.pitch_control,
             self.yaw_control,
             self.roll_control,
-            self.render_queue
+            self.yaw_queue,
+            self.pitch_queue,
+            self.roll_queue,
         )
         self.update_thread.start()
 
     def process_queue(self):
-        if(not self.render_queue.empty()):
-            msg = self.render_queue.get(0)
-            self.pos_render.update_render(self.frame_master, msg, 0, 0)
+        if(not (self.yaw_queue.empty() or self.pitch_queue.empty() or self.roll_queue.empty())):
+            newYaw = self.yaw_queue.get(0)
+            newPitch = self.pitch_queue.get(0)
+            newRoll = self.roll_queue.get(0)
+            self.pos_render.update_render(self.frame_master, newYaw, newPitch, newRoll)
         self.master.after(50, self.process_queue)
 
         
