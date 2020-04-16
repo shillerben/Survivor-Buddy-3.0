@@ -131,7 +131,12 @@ class LabelScaleSpinbox(tk.Frame):
     
     def send_command(self):
         if self.serial_arm_controller.is_connected:
-            self.serial_arm_controller.set_pitch(self.current_value)
+            if self.axis == 0:  #Pitch
+                self.serial_arm_controller.set_pitch(self.current_value)
+            elif self.axis == 1:    #Yaw
+                self.serial_arm_controller.set_yaw(self.current_value)
+            elif self.axis == 2:    #Roll
+                self.serial_arm_controller.set_roll(self.current_value)  
         
 
 class RenderDiagram(tk.Frame): 
@@ -163,39 +168,38 @@ class RenderDiagram(tk.Frame):
         # self.ax.quiver(0, -2, 0, 0, 4, 0, length=1.0, arrow_length_ratio=0, color = '#5d5fcf') #blue, front-back
         # self.ax.quiver(0, 0, 0, 0, 0, 4, length=1.0, arrow_length_ratio=0, color = '#6ad15e') #green, height
 
-        self.ax.quiver(-1, 1.25, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-        self.ax.quiver(1, 1.25, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-
-        self.ax.quiver(-0.4, 1.25, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-        self.ax.quiver(0.4, 1.25, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-
-        self.ax.quiver(1, 1.25, 0, -0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-        self.ax.quiver(-1, 1.25, 0, 0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-        self.ax.quiver(0.4, 0.25, 0, -0.8, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
-
-        self.ax.quiver(1, -1.75, 0, -2, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(-1, 1.5, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')   #Draw basic diagram of arm base to improve readability
+        self.ax.quiver(1, 1.5, 0, 0, -3, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(-0.4, 1.5, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(0.4, 1.5, 0, 0, -1, 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(1, 1.5, 0, -0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(-1, 1.5, 0, 0.6, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(0.4, 0.5, 0, -0.8, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
+        self.ax.quiver(1, -1.5, 0, -2, 0 , 0, length=1.0, arrow_length_ratio=0, color = '#727985')
 
         self.ax.set_xlim(left=-2, right=2, emit=True, auto=False)
         self.ax.set_ylim(bottom=-2, top=2, emit=True, auto=False)
         self.ax.set_zlim(bottom=0, top=4, emit=True, auto=False)
         self.ax.set_xlabel('FRONT')
 
-    def update_render(self, master, new_yaw, new_pitch, new_roll):   #will implement if I can figure out how to update plot
+    def update_render(self, master, new_yaw, new_pitch, new_roll):
         self.ax.clear() #clear old data
         self.draw_axes()    #redraw axes
         yaw = float(new_yaw) * np.pi / 180  #Convert angles to radians
         pitch = float(new_pitch) * np.pi / 180
         roll = float(new_roll) * np.pi / 180
 
-        self.ax.quiver(0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
-        self.ax.quiver(-0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
+        self.ax.quiver(-0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0, color = '#a83e32')
         self.ax.quiver(0.2, 1, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
         self.ax.quiver(0.2, -np.cos(pitch)*2 + 1, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
+        self.ax.quiver(0.2, -np.cos(pitch)*1.5 + 1, np.sin(pitch)*1.5, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
 
-        self.ax.quiver(0, -np.cos(pitch)*2 + 1, np.sin(pitch)*2, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=1.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
+        self.ax.quiver(0, -np.cos(pitch)*1.75 + 1, np.sin(pitch)*1.75, - np.sin(yaw), np.sin(pitch + np.pi) * np.cos(yaw), np.cos(pitch + np.pi) * np.cos(yaw), length=2.0, arrow_length_ratio=0.25, color = '#32a852') #Vector of phone direction
+
+        self.ax.quiver(0.5, -np.cos(pitch)*2.5 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*2.5 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
+        self.ax.quiver(0.5, -np.cos(pitch)*1 + 1 - 0.25 * np.sin(pitch), np.sin(pitch)*1 - 0.25 * np.cos(pitch), -1, 0, 0, length=1.0, arrow_length_ratio=0, color = '#3e48d6')
         
-        # self.ax.quiver(0, -np.cos(pitch)*2, np.sin(pitch)*2, -np.cos(roll), np.sin(pitch + np.pi) * np.cos(roll), np.cos(pitch + np.pi) * np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#FF094f') #Vector of phone orientation
-
         # self.ax.quiver(-2, 0, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0.25, color = '#727985') # pitch "shadow"
         # self.ax.quiver(0, 0, 0, -np.sin(yaw), -np.cos(yaw), 0, length=2, arrow_length_ratio=0.25, color = '#727985') # yaw "shadow"
         # self.ax.quiver(0, 2, 0, -np.cos(roll), 0 , np.sin(roll), length=2.0, arrow_length_ratio=0.25, color = '#727985') #roll "shadow"
