@@ -39,7 +39,7 @@ class Application(tk.Frame):
         self.menu_bar = tk.Menu(self)
         self.create_menu(self.menu_bar)
         
-        self.position_frame = PositionFrame(self, self.serial_arm_controller)
+        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile)
         self.position_frame.pack(fill="x")
         
         self.notifications_frame = NotificationFrame(self, self.logFile)

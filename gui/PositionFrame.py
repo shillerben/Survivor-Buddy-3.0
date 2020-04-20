@@ -13,6 +13,7 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from threading import Thread
+from datetime import datetime
 import time
 import queue
 
@@ -155,6 +156,10 @@ class RenderDiagram(tk.Frame):
 
         self.render_canvas = FigureCanvasTkAgg(self.fig, master)
         self.render_canvas.get_tk_widget().pack()
+
+        self.yawD = 0   #Degree values for yaw, pitch and roll
+        self.pitchD = 0
+        self.rollD = 0
     
     def draw_axes(self):
         # Remove unneccesary information from plot
@@ -187,6 +192,9 @@ class RenderDiagram(tk.Frame):
         yaw = float(new_yaw) * np.pi / 180  #Convert angles to radians
         pitch = float(new_pitch) * np.pi / 180
         roll = float(new_roll) * np.pi / 180
+        self.yawD = new_yaw
+        self.pitchD = new_pitch
+        self.rollD = new_roll
 
         self.ax.quiver(0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0, color = '#a83e32') #Arm wireframe
         self.ax.quiver(-0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0, color = '#a83e32')
@@ -249,11 +257,13 @@ class RenderDiagram(tk.Frame):
         plt.close()
 
 class PositionFrame(tk.Frame):
-    def __init__(self, master, arm_controller, **kwargs):
+    def __init__(self, master, arm_controller, _logFile, **kwargs):
         super().__init__(master, **kwargs)
         
         self.serial_arm_controller = arm_controller
         
+        self.logFile = _logFile
+
         self.render_frame = tk.Frame(self)
         self.render_frame.pack(side="left")
         self.create_render(self.render_frame)
@@ -307,6 +317,10 @@ class PositionFrame(tk.Frame):
             newYaw = self.yaw_queue.get(0)
             newPitch = self.pitch_queue.get(0)
             newRoll = self.roll_queue.get(0)
+            if (newYaw != self.pos_render.yawD or newPitch != self.pos_render.pitchD or newRoll != self.pos_render.rollD):
+                now = datetime.now()
+                timestamp = now.strftime("%H:%M:%S")
+                self.logFile.write(timestamp + " - Position: Y: " + newYaw + " P: " + newPitch + " R: " + newRoll + "\n")
             self.pos_render.update_render(self.frame_master, newYaw, newPitch, newRoll)
         self.master.after(50, self.process_queue)
 
