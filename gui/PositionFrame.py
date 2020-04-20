@@ -200,9 +200,8 @@ class RenderDiagram(tk.Frame):
         self.ax.quiver(-0.2, 1, 0, 0, -np.cos(pitch), np.sin(pitch), length=2, arrow_length_ratio=0, color = '#a83e32')
         self.ax.quiver(0.2, 1, 0, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
         self.ax.quiver(0.2, -np.cos(pitch)*2 + 1, np.sin(pitch)*2, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
-        self.ax.quiver(0.2, -np.cos(pitch)*1.5 + 1, np.sin(pitch)*1.5, -0.4, 0, 0, length=1.0, arrow_length_ratio=0, color = '#a83e32')
 
-        self.ax.quiver( #Vector of phone direction
+        self.ax.quiver( #Vector of phone yaw direction
             0, 
             -np.cos(pitch)*1.75 + 1, 
             np.sin(pitch)*1.75, 
@@ -249,6 +248,16 @@ class RenderDiagram(tk.Frame):
             -1.5 * np.cos(roll)* np.cos(roll) * np.cos(pitch), 
             1.5 * np.cos(roll) * np.sin(pitch), 
             length=1.0, arrow_length_ratio=0, color = '#3e48d6'
+            )
+        
+        self.ax.quiver( #Arrow pointing to top of phone
+            0, 
+            -np.cos(pitch)*1.75 + 1, 
+            np.sin(pitch)*1.75,
+            0.75 * np.sin(roll), 
+            -0.75 * np.cos(roll) * np.cos(pitch), 
+            0.75 * np.cos(roll) * np.sin(pitch), 
+            length=1.0, arrow_length_ratio=0.5, color = '#0917de'
             )
 
         self.render_canvas.draw()
