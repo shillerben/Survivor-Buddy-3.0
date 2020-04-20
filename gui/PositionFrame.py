@@ -310,6 +310,7 @@ class PositionFrame(tk.Frame):
             self.pitch_queue,
             self.roll_queue,
         )
+        self.update_thread.setDaemon(True)
         self.update_thread.start()
 
     def process_queue(self):
