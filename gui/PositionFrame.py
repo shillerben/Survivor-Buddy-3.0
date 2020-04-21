@@ -18,7 +18,7 @@ import time
 import queue
 
 class PositionUpdater(Thread):
-    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _yaw_queue, _pitch_queue, _roll_queue, **kwargs):
+    def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _yaw_queue, _pitch_queue, _roll_queue, _notifications, **kwargs):
         super().__init__(**kwargs)
         self.serial_arm_controller = dev
         self.pitch_control = _pitch_control
@@ -27,6 +27,7 @@ class PositionUpdater(Thread):
         self.yaw_queue = _yaw_queue
         self.pitch_queue = _pitch_queue
         self.roll_queue = _roll_queue
+        self.notifications = _notifications
 
     def run(self):
         yaw = 0
@@ -34,16 +35,20 @@ class PositionUpdater(Thread):
         roll = 0
         while True:
             if self.serial_arm_controller.is_connected: #If else to allow testing of GUI without connected arm
-                self.serial_arm_controller.update_position()
-                pitch = self.serial_arm_controller.position.pitch
-                yaw = self.serial_arm_controller.position.yaw
-                roll = self.serial_arm_controller.position.roll
-                self.pitch_control.slider.set(pitch)
-                self.pitch_control.spinbox.set(pitch)
-                self.yaw_control.slider.set(yaw)
-                self.yaw_control.spinbox.set(yaw)
-                self.roll_control.slider.set(roll)
-                self.roll_control.spinbox.set(roll)
+                try:
+                    self.serial_arm_controller.update_position()
+                    pitch = self.serial_arm_controller.position.pitch
+                    yaw = self.serial_arm_controller.position.yaw
+                    roll = self.serial_arm_controller.position.roll
+                    self.pitch_control.slider.set(pitch)
+                    self.pitch_control.spinbox.set(pitch)
+                    self.yaw_control.slider.set(yaw)
+                    self.yaw_control.spinbox.set(yaw)
+                    self.roll_control.slider.set(roll)
+                    self.roll_control.spinbox.set(roll)
+                except: # disconnected
+                    self.notifications.append_line("WARNING: DEVICE DISCONNECTED")
+                    self.serial_arm_controller.close()
             else:
                 pitch = self.pitch_control.spinbox.get()
                 yaw = self.yaw_control.spinbox.get()
@@ -268,6 +273,7 @@ class RenderDiagram(tk.Frame):
 class PositionFrame(tk.Frame):
     def __init__(self, master, arm_controller, _logFile, **kwargs):
         super().__init__(master, **kwargs)
+        self._master = master
         
         self.serial_arm_controller = arm_controller
         
@@ -318,6 +324,7 @@ class PositionFrame(tk.Frame):
             self.yaw_queue,
             self.pitch_queue,
             self.roll_queue,
+            self._master.notifications_frame
         )
         self.update_thread.setDaemon(True)
         self.update_thread.start()
@@ -330,7 +337,7 @@ class PositionFrame(tk.Frame):
             if (newYaw != self.pos_render.yawD or newPitch != self.pos_render.pitchD or newRoll != self.pos_render.rollD):
                 now = datetime.now()
                 timestamp = now.strftime("%H:%M:%S")
-                self.logFile.write(timestamp + " - Position: Y: " + newYaw + " P: " + newPitch + " R: " + newRoll + "\n")
+                self.logFile.write(str(timestamp) + " - Position: P: " + str(newPitch) + " Y: " + str(newYaw) + " R: " + str(newRoll) + "\n")
             self.pos_render.update_render(self.frame_master, newYaw, newPitch, newRoll)
         self.master.after(50, self.process_queue)
 

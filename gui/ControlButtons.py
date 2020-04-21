@@ -58,6 +58,11 @@ class ControlButtons(tk.Frame):
         self.shake_head_btn = ttk.Button(self.bottom_frame,
             text="Shake Head", command=self.shake)
         self.shake_head_btn.pack(side="left")
+
+        # Shutdown button
+        self.shutdown_btn = ttk.Button(self.bottom_frame,
+            text="Shutdown", command=self.shutdown)
+        self.shutdown_btn.pack(side="left")
         
         '''
         # Emergency Shutdown button
@@ -132,6 +137,13 @@ class ControlButtons(tk.Frame):
             self.serial_arm_controller.shake()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Shaking head...") #For offline testing
+
+    def shutdown(self):
+        if self.serial_arm_controller.is_connected:
+            self.notifications_frame.append_line("Shutting down...")
+            self.serial_arm_controller._shutdown()
+        else:
+            self.notifications_frame.append_line("[DISCONNECTED] Shutting down...") #For offline testing
         
     def hello(self):
         print("Hello from ControlButtons")

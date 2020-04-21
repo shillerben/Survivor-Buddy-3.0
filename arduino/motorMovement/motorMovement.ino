@@ -33,17 +33,18 @@ const int LEFT_BASE_FB_DOWN = 415;
 const int LEFT_BASE_FB_UP = 235;
 const int PHONEMOUNT_FB_PORTRAIT = 0;
 const int PHONEMOUNT_FB_LANDSCAPE = 0;
-const int TABLETOP_LEFT = 0;
-const int TABLETOP_RIGHT = 0;
+const int TABLETOP_FRONT = 175;
+const int TABLETOP_LEFT = 270;
+const int TABLETOP_RIGHT = 90;
 
 //Create VarSpeedServo objects 
 VarSpeedServo leftBaseServo;
 VarSpeedServo rightBaseServo;
-VarSpeedServo turnTableServo;
+VarSpeedServo tabletopServo;
 VarSpeedServo phoneMountServo; 
 
 enum Command {PITCH, YAW, ROLL, CLOSE, OPEN, PORTRAIT, 
-              LANDSCAPE, NOD, SHAKE, TILT};
+              LANDSCAPE, NOD, SHAKE, TILT, SHUTDOWN};
 
 /*******************************************************************/
 /*Phone Mount Functions*/
@@ -83,13 +84,13 @@ int getPositionBM(){
 }
 
 // 360 parallax constants
-const int unitsFC = 360; // 360 degrees in a circle
-const int dcMin = 29;
-const int dcMax = 971;
-const int dutyScale = 1;
+const unsigned long unitsFC = 360; // 360 degrees in a circle
+const unsigned long dcMin = 29;
+const unsigned long dcMax = 971;
+const unsigned long dutyScale = 1000;
 // not constants, but don't want to have to declare them a lot
 unsigned long tCycle, tHigh, tLow, dc;
-unsigned int theta;
+unsigned long theta;
 
 int getPositionTabletop(){
   int tCycle = 0;
@@ -98,18 +99,12 @@ int getPositionTabletop(){
     tHigh = pulseIn(turnTableFeedback, HIGH);
     tLow = pulseIn(turnTableFeedback, LOW);
     tCycle = tHigh + tLow;
-    Serial.print("tHigh: ");
-    Serial.println(tHigh);
-    Serial.print("tLow: ");
-    Serial.println(tLow);
-    Serial.print("tCycle: ");
-    Serial.println(tCycle);
     if ((tCycle > 1000) && (tCycle < 1200)) {
       break;
     }
   }
   dc = (dutyScale * tHigh) / tCycle;
-  theta = (unitsFC - 1) - ((dc - dcMin) * unitsFC) / (dcMax - dcMin + 1);
+  theta = ((dc - dcMin) * unitsFC) / (dcMax - dcMin + 1);
   if (theta < 0) {
     theta = 0;
   }
@@ -165,7 +160,28 @@ void nod(){
 /*******************************************************************/
 /*Turn Table Motor Functions*/
 void shake(){
-  //move left and right
+//  setYaw(135);
+//  delay(100);
+//  setYaw(225);
+//  delay(100);
+//  setYaw(TABLETOP_FRONT);
+}
+
+void _shutdown() {
+  //setYaw(TABLETOP_FRONT);
+  portrait();
+  delay(100);
+  down();
+  delay(100);
+  // blink LED then off
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(ledPin, LOW);
+    delay(500);
+    digitalWrite(ledPin, HIGH);
+    delay(500);
+  }
+  //stop all motor movement. will need to unplug and plug back in to move again
+  //while(true) {}
 }
 
 /*Emergency Shut Down*/
@@ -181,8 +197,22 @@ void setPitch(char val) {
   rightBaseServo.write(rightVal, 40);
 }
 
-void setYaw(char val) {
-  
+void setYaw(unsigned short val) {
+  unsigned short currPos = getPositionTabletop();
+  if (val > currPos) {
+    tabletopServo.write(83);
+    while (val > currPos) {
+      currPos = getPositionTabletop();
+    }
+    tabletopServo.write(90);
+  }
+  else if (val < currPos) {
+    tabletopServo.write(100);
+    while (val < currPos) {
+      currPos = getPositionTabletop();
+    }
+    tabletopServo.write(90);
+  }
 }
 
 void setRoll(char val) {
@@ -193,9 +223,15 @@ void setRoll(char val) {
 void sendPosition() {
   char pos[3]; // [pitch, yaw, roll]
   pos[0] = map(rightBaseServo.read(), RIGHT_BASE_DOWN, RIGHT_BASE_UP, 0, 90);
-  pos[1] = map(turnTableServo.read(), 0, 180, TABLETOP_LEFT, TABLETOP_RIGHT);
+  //pos[1] = getPositionTabletop();
+  pos[1] = 0;
   pos[2] = map(phoneMountServo.read(), PHONEMOUNT_PORTRAIT, PHONEMOUNT_LANDSCAPE, 0, 90);
   Serial.write(pos, 3);
+}
+
+void test() {
+  shake();
+  delay(1000);
 }
 
 /*******************************************************************/
@@ -217,7 +253,7 @@ void setup() {
   leftBaseServo.write(LEFT_BASE_DOWN, 60, true);
   rightBaseServo.attach(rightBasePin);
   rightBaseServo.write(RIGHT_BASE_DOWN, 60, true);
-  turnTableServo.attach(turnTablePin);
+  tabletopServo.attach(turnTablePin);
   phoneMountServo.attach(phoneMountPin);
   phoneMountServo.write(PHONEMOUNT_PORTRAIT);
 }
@@ -265,6 +301,9 @@ void loop() {
     }
     else if(serialData[0] == 0x09){ // tilt
       tilt();
+    }
+    else if (serialData[0] == 0x10) { // shutdown
+      _shutdown();
     }
   }
   if (numLoops % 100 == 0) {
