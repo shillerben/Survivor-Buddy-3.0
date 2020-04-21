@@ -7,6 +7,7 @@ Created on Mon Mar  9 08:34:29 2020
 
 from serial.tools import list_ports
 import serial
+from threading import Thread
 
 ARDUINO_VID  = 0x2341
 UNO_PID      = 0x0043
@@ -33,11 +34,30 @@ class Position:
         
     def __str__(self):
         return "P: {}, Y: {}, R: {}".format(self.pitch, self.yaw, self.roll)
+
+
+class ConnectionChecker(Thread):
+    def __init__(self, _dev, _comport, _notifications, **kwargs):
+        super().__init__(**kwargs)
+        self.serial_arm_controller = _dev
+        self.comport = _comport
+        self.notifications = _notifications
+
+    def run(self):
+        self.is_connected = True
+        while self.is_connected:
+            devs = list_ports.comports()
+            if self.comport not in devs:
+                self.notifications.append("WARNING: DEVICE DISCONNECTED")
+                self.serial_arm_controller.close()
+                return
+            time.sleep(1)
         
         
 class SerialArmController:
-    def __init__(self, _status_bar):
+    def __init__(self, _status_bar, _notifications):
         self.status_bar = _status_bar
+        self.notifications = _notifications
         self._com_port = ""
         self._device = None
         self.devs = []
@@ -61,12 +81,16 @@ class SerialArmController:
             self._device = serial.Serial(comport, timeout=1)
             self.status_bar.set_status("CONNECTED")
             self.is_connected = True
+            self.connection_checker = ConnectionChecker(self, comport, self.notifications)
+            self.connection_checker.setDaemon(True)
+            self.connection_checker.start()
         
     def close(self):
         if self.is_connected:
             self._device.close()
             self.status_bar.set_status("DISCONNECTED")
             self.is_connected = False
+            self.connection_checker.join()
         
     def send(self, data):
         if self.is_connected:
@@ -102,18 +126,30 @@ class SerialArmController:
             self.send(bytes((Command.ROLL, val)))
             
     def close_arm(self):
-        self.send(bytes((Command.CLOSE, 0)))
+        if self.position.pitch == 0:
+            self.notifications.append("WARNING: ARM ALREADY CLOSED")
+        else:
+            self.send(bytes((Command.CLOSE, 0)))
         
     def open_arm(self):
-        self.send(bytes((Command.OPEN, 0)))
+        if self.position.pitch == 90:
+            self.notifications.append("WARNING: ARM ALREADY OPEN")
+        else:
+            self.send(bytes((Command.OPEN, 0)))
         
     def portrait(self):
         if self.is_connected:
-            self.send(bytes((Command.PORTRAIT, 0)))
+            if self.position.roll == 0:
+                self.notifications.append("WARNING: ALREADY IN PORTRAIT")
+            else:
+                self.send(bytes((Command.PORTRAIT, 0)))
                 
     def landscape(self):
         if self.is_connected:
-            self.send(bytes((Command.LANDSCAPE, 0)))
+            if self.position.roll == 90:
+                self.notifications.append("WARNING: ALREADY IN LANDSCAPE")
+            else:
+                self.send(bytes((Command.LANDSCAPE, 0)))
                 
     def tilt(self):
         if self.is_connected:

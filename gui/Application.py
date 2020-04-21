@@ -23,14 +23,17 @@ class Application(tk.Frame):
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.config(padx=16, pady=16)
-        # need the status bar to give to the arm controller
-        self.status_bar = StatusBar(self)
-        self.serial_arm_controller = SerialArmController(self.status_bar)
         
         now = datetime.now()    #Create unique logfile for notifications and errors
         timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
         file_name = 'LOGFILE_' + timestamp +'.txt'        
         self.logFile = open(os.path.join(os.path.realpath('../logs/'), file_name) , 'w+')   #Save logfile to log folder
+
+        # need the status bar to give to the arm controller
+        self.status_bar = StatusBar(self)
+        self.notifications_frame = NotificationFrame(self, self.logFile)
+
+        self.serial_arm_controller = SerialArmController(self.status_bar, self.notifications_frame)
 
         self.create_widgets()
         
@@ -42,8 +45,6 @@ class Application(tk.Frame):
         self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile)
         self.position_frame.pack(fill="x")
         
-        self.notifications_frame = NotificationFrame(self, self.logFile)
-
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
         self.control_buttons.pack(fill="x")
         
@@ -71,15 +72,6 @@ class Application(tk.Frame):
         self.device_menu.add_separator()
         
         root_menu.add_cascade(label="Device", menu=self.device_menu)
-        
-        '''
-        # Gesture Menu
-        self.gesture_menu = tk.Menu(root_menu, tearoff=0)
-        self.gesture_menu.add_command(label="Nod", command=self.hello)
-        self.gesture_menu.add_command(label="Shake Head", command=self.hello)
-        self.gesture_menu.add_command(label="Tilt Head", command=self.hello)
-        root_menu.add_cascade(label="Gesture", menu=self.gesture_menu)
-        '''
         
         # Help Menu
         self.help_menu = tk.Menu(root_menu, tearoff=0)
