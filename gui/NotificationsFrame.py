@@ -9,6 +9,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from datetime import datetime
 
+#Class for creating and controlling notification box
 class NotificationFrame(tk.Frame):
     def __init__(self, master, _logFile, **kwargs):
         super().__init__(master, **kwargs)
@@ -26,7 +27,9 @@ class NotificationFrame(tk.Frame):
         self.text.config(state=tk.DISABLED)
         self.text.pack()
         #self.text.grid()
-        
+    
+    #Prints notification/warning to notification box
+    #Prints timestamped data to external log file
     def append_line(self, line):
         self.text.config(state=tk.NORMAL)
         self.text.insert(tk.END, line + "\n")

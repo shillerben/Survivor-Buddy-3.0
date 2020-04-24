@@ -18,8 +18,8 @@ int phoneMountFeedback = A4;
 int ledPin = 2;
 
 // Position constants
-const int RIGHT_BASE_DOWN = 45;
-const int RIGHT_BASE_UP = 123;
+const int RIGHT_BASE_DOWN = 55;
+const int RIGHT_BASE_UP = 138;
 const int LEFT_BASE_DOWN = 150;
 const int LEFT_BASE_UP = 65;
 const int PHONEMOUNT_LANDSCAPE = 7;
@@ -33,9 +33,9 @@ const int LEFT_BASE_FB_DOWN = 415;
 const int LEFT_BASE_FB_UP = 235;
 const int PHONEMOUNT_FB_PORTRAIT = 0;
 const int PHONEMOUNT_FB_LANDSCAPE = 0;
-const int TABLETOP_FRONT = 175;
-const int TABLETOP_LEFT = 270;
-const int TABLETOP_RIGHT = 90;
+const int TABLETOP_FRONT = 120;
+const int TABLETOP_LEFT = 205;
+const int TABLETOP_RIGHT = 25;
 
 //Create VarSpeedServo objects 
 VarSpeedServo leftBaseServo;
@@ -160,15 +160,15 @@ void nod(){
 /*******************************************************************/
 /*Turn Table Motor Functions*/
 void shake(){
-//  setYaw(135);
-//  delay(100);
-//  setYaw(225);
-//  delay(100);
-//  setYaw(TABLETOP_FRONT);
+  setYaw((TABLETOP_LEFT + TABLETOP_FRONT)/2);
+  delay(100);
+  setYaw((TABLETOP_RIGHT + TABLETOP_FRONT)/2);
+  delay(100);
+  setYaw(TABLETOP_FRONT);
 }
 
 void _shutdown() {
-  //setYaw(TABLETOP_FRONT);
+  setYaw(TABLETOP_FRONT);
   portrait();
   delay(100);
   down();
@@ -180,6 +180,7 @@ void _shutdown() {
     digitalWrite(ledPin, HIGH);
     delay(500);
   }
+  sendPosition();
   //stop all motor movement. will need to unplug and plug back in to move again
   //while(true) {}
 }
@@ -197,22 +198,50 @@ void setPitch(char val) {
   rightBaseServo.write(rightVal, 40);
 }
 
-void setYaw(unsigned short val) {
-  unsigned short currPos = getPositionTabletop();
+void setYaw(int val) {
+//  int offset = 0;
+  int currPos = getPositionTabletop();
+//  int diff = currPos - val; /* ATTEMPT AT PID CONTROLLER FAILED */
+//  while (abs(diff) > 1) {
+//    Serial.println("LOOPING");
+//    offset = 0;
+//    if (diff > 200) {
+//      diff = 200;
+//    }
+//    else if (diff < -200) {
+//      diff = -200;
+//    }
+//    if (diff > 1) {
+//      offset = -30;
+//    }
+//    else if (diff < -1) {
+//      offset = 30;
+//    }
+//    tabletopServo.writeMicroseconds(1500 + diff + offset);
+//    currPos = getPositionTabletop();
+//    diff = currPos - val;
+//  }
   if (val > currPos) {
-    tabletopServo.write(83);
+    tabletopServo.writeMicroseconds(1430);
+    while (val > currPos + 10) {
+      currPos = getPositionTabletop();
+    }
+    tabletopServo.writeMicroseconds(1440);
     while (val > currPos) {
       currPos = getPositionTabletop();
     }
-    tabletopServo.write(90);
   }
   else if (val < currPos) {
-    tabletopServo.write(100);
+    tabletopServo.writeMicroseconds(1555);
+    while (val < currPos - 10) {
+      currPos = getPositionTabletop();
+    }
+    tabletopServo.writeMicroseconds(1540);
     while (val < currPos) {
       currPos = getPositionTabletop();
     }
-    tabletopServo.write(90);
   }
+  tabletopServo.writeMicroseconds(1500);
 }
 
 void setRoll(char val) {
@@ -223,8 +252,7 @@ void setRoll(char val) {
 void sendPosition() {
   char pos[3]; // [pitch, yaw, roll]
   pos[0] = map(rightBaseServo.read(), RIGHT_BASE_DOWN, RIGHT_BASE_UP, 0, 90);
-  //pos[1] = getPositionTabletop();
-  pos[1] = 0;
+  pos[1] = map(getPositionTabletop(), TABLETOP_LEFT, TABLETOP_RIGHT, 0, 180);
   pos[2] = map(phoneMountServo.read(), PHONEMOUNT_PORTRAIT, PHONEMOUNT_LANDSCAPE, 0, 90);
   Serial.write(pos, 3);
 }
@@ -249,11 +277,13 @@ void setup() {
   pinMode(phoneMountFeedback, INPUT);
   
   // attaches the servo on pin to the servo object
+  tabletopServo.attach(turnTablePin);
+  setYaw(TABLETOP_FRONT);
   leftBaseServo.attach(leftBasePin);  
   leftBaseServo.write(LEFT_BASE_DOWN, 60, true);
   rightBaseServo.attach(rightBasePin);
   rightBaseServo.write(RIGHT_BASE_DOWN, 60, true);
-  tabletopServo.attach(turnTablePin);
+//  rightBaseServo.write(RIGHT_BASE_UP, 60, true);
   phoneMountServo.attach(phoneMountPin);
   phoneMountServo.write(PHONEMOUNT_PORTRAIT);
 }
@@ -261,8 +291,14 @@ void setup() {
 //Serial Data
 unsigned char serialData[128];
 unsigned long numLoops = 0;
+int lastYaw = TABLETOP_FRONT;
 
 void loop() {
+  // try to keep tabletopServo from jerking
+//  setYaw(lastYaw);
+//  tabletopServo.writeMicroseconds(1510);
+//  test();
+  
   numLoops++;
   if (Serial.available() > 0) {//serial is reading stuff 
     Serial.readBytes(serialData, 2); 
@@ -273,7 +309,8 @@ void loop() {
     }
     else if (serialData[0] == 0x01) { // set yaw
       if (0 <= serialData[1] && serialData[1] <= 180) {
-        setYaw(serialData[1]);
+        lastYaw = map(serialData[1], 0, 180, TABLETOP_LEFT, TABLETOP_RIGHT);
+        setYaw(lastYaw);
       }
     }
     else if (serialData[0] == 0x02) { // set roll
@@ -297,6 +334,7 @@ void loop() {
       nod();
     }
     else if (serialData[0] == 0x08){ // shake
+      lastYaw = TABLETOP_FRONT;
       shake();
     }
     else if(serialData[0] == 0x09){ // tilt
@@ -307,8 +345,10 @@ void loop() {
     }
   }
   if (numLoops % 100 == 0) {
+    setYaw(lastYaw);
     sendPosition();
     numLoops = 0;
   }
+  
   delay(10);
 } //end loop
