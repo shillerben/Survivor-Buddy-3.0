@@ -14,6 +14,7 @@ from StatusBar import StatusBar
 from SerialArmController import SerialArmController
 from datetime import datetime   #For log file formatting
 import os.path
+import webbrowser
 
 
 class Application(tk.Frame):
@@ -75,10 +76,9 @@ class Application(tk.Frame):
         
         # Help Menu
         self.help_menu = tk.Menu(root_menu, tearoff=0)
-        self.help_menu.add_command(label="Getting Started", command=self.hello)
-        self.help_menu.add_command(label="Troubleshooting", command=self.hello)
-        self.help_menu.add_command(label="Programmer's Reference", command=self.hello)
-        self.help_menu.add_command(label="About Survivor Buddy 3.0", command=self.hello)
+        self.help_menu.add_command(label="About Survivor Buddy 3.0", command=self.open_survivor_buddy_page)
+        self.help_menu.add_command(label="User Manual", command=self.open_user_manual)
+        self.help_menu.add_command(label="Programmer's Reference", command=self.open_programmer_reference)
         root_menu.add_cascade(label="Help", menu=self.help_menu)
 
 
@@ -104,7 +104,16 @@ class Application(tk.Frame):
     def close(self):
         self.device_menu.delete(2 + len(self.serial_arm_controller.devs))
         self.serial_arm_controller.close()
+
+    def open_survivor_buddy_page(self):
+        webbrowser.open("http://survivorbuddy.cse.tamu.edu/")
         
+    def open_user_manual(self):
+        webbrowser.open("https://docs.google.com/document/d/1V6gmVehsxrlFoc5FzThtdTNSovUbyU03AUEBfnAclKA/edit?usp=sharing")
+
+    def open_programmer_reference(self):
+        webbrowser.open("https://docs.google.com/document/d/1na2HvLo_mj5d7lOUPciScx8XJMGGNWO7Rn9zhael29c/edit?usp=sharing")
+
     def hello(self):
         print("Hello from Menu")
         self.notifications_frame.append_line("Hello from Menu")

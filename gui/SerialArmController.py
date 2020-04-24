@@ -110,7 +110,7 @@ class SerialArmController:
         pos = self.recv()
         if pos:
             self.position.pitch = int(pos[0])
-            self.position.yaw = int(pos[1])
+            self.position.yaw = int(pos[1] - 90)
             self.position.roll = int(pos[2])
 
     def set_pitch(self, val):
@@ -169,5 +169,6 @@ class SerialArmController:
     def _shutdown(self):
         if self.is_connected:
             self.send(bytes((Command.SHUTDOWN, 0)))
+            time.sleep(4)
             self.close()
         
