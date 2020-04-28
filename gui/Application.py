@@ -137,7 +137,7 @@ class Application(tk.Frame):
         webbrowser.open("https://docs.google.com/document/d/1V6gmVehsxrlFoc5FzThtdTNSovUbyU03AUEBfnAclKA/edit?usp=sharing")
 
     def open_programmer_reference(self):
-        webbrowser.open("https://docs.google.com/document/d/1na2HvLo_mj5d7lOUPciScx8XJMGGNWO7Rn9zhael29c/edit?usp=sharing")
+        webbrowser.open("https://drive.google.com/a/tamu.edu/file/d/1pMKci4BTCTu7H6GREmmWEmBEgZ4klQWn/view?usp=sharing")
 
     def hello(self):
         '''
