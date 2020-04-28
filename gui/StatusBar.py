@@ -9,7 +9,15 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 class StatusBar(tk.Frame):
+    '''Displays the connection status of the GUI to the arm'''
+
     def __init__(self, master, **kwargs):
+        '''
+        Constructor for StatusBar
+
+        :param master: The Tk parent widget
+        '''
+
         super().__init__(master, **kwargs)
         
         # STATUS #
@@ -25,27 +33,13 @@ class StatusBar(tk.Frame):
             self.status_frame, textvariable=self.status_text)
         self.status_text_label.pack(side="left")
 
-        ''' Might get rid of this because it doesn't seem useful anymore
-        # ORIENTATION #
-        self.orientation_frame = tk.Frame(self)
-        self.orientation_frame.pack(side="right")
-        
-        self.orientation_label = ttk.Label(self.orientation_frame, text="Orientation:")
-        self.orientation_label.pack(side="left")
-        
-        self.orientation_text = tk.StringVar()
-        self.orientation_text.set("N/A")
-        self.orientation_text_label = ttk.Label(
-            self.orientation_frame, textvariable=self.orientation_text)
-        self.orientation_text_label.pack(side="left")
-        '''
-
 
     def set_status(self, status):
-        #print("set_status({})".format(status))
+        '''
+        Sets the status of the GUI to the arm
+
+        :param status: The status to set to
+        '''
+
         self.status_text.set(status)
         
-        
-    def set_orientation(self, orientation):
-        self.orientation_text.set(orientation)
-        #print("set_orientation({})".format(orientation))

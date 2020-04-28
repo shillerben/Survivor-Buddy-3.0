@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Mar  2 08:08:16 2020
-
-@author: Ben Shiller, Philip Rettenmaier
-"""
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -17,9 +12,24 @@ from datetime import datetime
 import time
 import queue
 
-#Class used to update UI elements based on arm position
+
 class PositionUpdater(Thread):
+    '''Updates UI elements based on arm position'''
+
     def __init__(self, dev, _pitch_control, _yaw_control, _roll_control, _yaw_queue, _pitch_queue, _roll_queue, _notifications, **kwargs):
+        '''
+        Constructor for PositionUpdater
+        
+        :param dev: The SerialArmController
+        :param _pitch_control: The pitch LabelScaleSpinbox
+        :param _yaw_control: The yaw LabelScaleSpinbox
+        :param _roll_control: The roll LabelScaleSpinbox
+        :param _yaw_queue: The yaw queue
+        :param _pitch_queue: The pitch queue
+        :param _roll_queue: The roll queue
+        :param _notifications: The NotificationsFrame
+        '''
+
         super().__init__(**kwargs)
         self.serial_arm_controller = dev
         self.pitch_control = _pitch_control
@@ -30,9 +40,13 @@ class PositionUpdater(Thread):
         self.roll_queue = _roll_queue
         self.notifications = _notifications
 
-    # Continually checks for changes to arm position, then updates the UI based on these changes, checks for changes every 0.1 seconds
-    # Runs is a thread separately from rest of UI, uses queue to update render and directly updates sliders and spinboxes
+
     def run(self):
+        '''
+        Continually checks for changes to arm position, then updates the UI based on these changes, checks for changes every 0.1 seconds.
+        Runs as a thread separately from rest of UI, uses queue to update render and directly updates sliders and spinboxes.
+        '''
+
         yaw = 0
         pitch = 0
         roll = 0
@@ -64,9 +78,22 @@ class PositionUpdater(Thread):
                 self.roll_queue.put(roll)
             time.sleep(0.1)
 
-#Class for controlling and creating sliders and spinboxes(up and down adjustment boxes)
+
 class LabelScaleSpinbox(tk.Frame):
+    '''A custom class to combine Tk Scale and Spinbox and keep them in sync'''
+
     def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, **kwargs):
+        '''
+        Constructor for LabelScaleSpinbox
+        
+        :param master: The Tk parent widget
+        :param text: The text to display next to the control
+        :param from_: The minimum valid value
+        :param to: The maximum valid value
+        :param axis: The axis that this LabelScaleSpinbox controls
+        :param dev: The SerialArmController
+        '''
+
         super().__init__(master, **kwargs)
         
         self.min = from_
@@ -99,15 +126,27 @@ class LabelScaleSpinbox(tk.Frame):
         self.spinbox.set(self.current_value)
         self.spinbox.pack(side="left")
     
-    #Sends command to arm based on slider value, sets spinbox based on slider
+
     def sliderUpdate(self, val):
+        '''
+        Sends command to arm based on slider value, sets spinbox based on slider
+        
+        :param val: The value passed to this function when the slider is released
+        '''
+
         newVal = int(self.slider.get())
         self.spinbox.set(newVal)    #Update spinbox value
         self.current_value = newVal
         self.send_command()
     
-    #Check that spinbox and slider are within valid range of values
+
     def validate_spinbox(self, val):
+        '''
+        Check that spinbox and slider are within valid range of values
+        
+        :param val: The value from the spinbox
+        '''
+
         try:
             ival = int(val)
             if ival < self.min or ival > self.max:
@@ -121,11 +160,16 @@ class LabelScaleSpinbox(tk.Frame):
             self.spinbox.set(str(round(self.current_value)))
             return False
         
+
     def invalid_spinbox(self):
+        '''Function that runs when the spinbox has an invalid value'''
+
         print("Error: Position input must be a number between {} and {}".format(self.min, self.max))
     
-    #Set slider position based on spinbox value, send command to arm
+
     def set_slider(self):
+        '''Set slider position based on spinbox value, send command to arm'''
+
         try:
             val = int(self.spinbox.get())
         except:
@@ -135,8 +179,10 @@ class LabelScaleSpinbox(tk.Frame):
         self.current_value = val
         self.send_command()
     
-    #Sends a new position to the arm based on changed axis
+
     def send_command(self):
+        '''Sends a new position to the arm based on changed axis'''
+
         if self.serial_arm_controller.is_connected:
             if self.axis == 0:  #Pitch
                 self.serial_arm_controller.set_pitch(self.current_value)
@@ -145,9 +191,18 @@ class LabelScaleSpinbox(tk.Frame):
             elif self.axis == 2:    #Roll
                 self.serial_arm_controller.set_roll(self.current_value)  
         
-#Displays a basic render of arm, helps to show position when arm can not be seen by user
+
 class RenderDiagram(tk.Frame): 
+    '''Displays a basic render of arm, helps to show position when arm can not be seen by user'''
+
     def __init__(self, master, dev=None, **kwargs):
+        '''
+        Constructor for RenderDiagram
+        
+        :param master: The Tk parent widget
+        :param dev: The SerialArmController
+        '''
+
         super().__init__(master, **kwargs)
 
         self.serial_arm_controller = dev
@@ -168,8 +223,10 @@ class RenderDiagram(tk.Frame):
         self.pitchD = 0
         self.rollD = 0
     
-    #Clear units from axes, display arm base, set axis limits
+
     def draw_axes(self):
+        '''Clear units from axes, display arm base, set axis limits'''
+
         # Remove unneccesary information from plot
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
@@ -194,8 +251,17 @@ class RenderDiagram(tk.Frame):
         self.ax.set_zlim(bottom=0, top=4, emit=True, auto=False)
         self.ax.set_xlabel('FRONT')
 
-    #Update display of render based on new arm position
+
     def update_render(self, master, new_yaw, new_pitch, new_roll):
+        '''
+        Update display of render based on new arm position
+        
+        :param master: The Tk parent widget
+        :param new_yaw: The new yaw value
+        :param new_pitch: The new pitch value
+        :param new_roll: The new roll value
+        '''
+
         self.ax.clear() #clear old data
         self.draw_axes()    #redraw axes
         yaw = float(new_yaw) * np.pi / 180  #Convert angles to radians
@@ -271,9 +337,19 @@ class RenderDiagram(tk.Frame):
 
         self.render_canvas.draw()
 
-#Creates and positions key elements of GUI
+
 class PositionFrame(tk.Frame):
+    '''Creates the Render and Control Sliders in the GUI'''
+
     def __init__(self, master, arm_controller, _logFile, **kwargs):
+        '''
+        Constructor for PositionFrame
+        
+        :param master: The Tk parent widget
+        :param arm_controller: The SerialArmController
+        :param _logFile: The output log file handle
+        '''
+
         super().__init__(master, **kwargs)
         self._master = master
         
@@ -297,15 +373,27 @@ class PositionFrame(tk.Frame):
         self.frame_master = self.render_frame    #s.t. master does not have to be passed to process queue
         self.master.after(100, self.process_queue)
 
-    #Initializes render of arm
+
     def create_render(self, master):    
+        '''
+        Initializes render of arm
+        
+        :param master: The Tk parent widget
+        '''
+
         self.pos_render = RenderDiagram(
             master, dev=self.serial_arm_controller
         )
         self.pos_render.pack()
     
-    #Creates pitch, yaw and roll sliders and spinboxes
+
     def create_controls(self, master):
+        '''
+        Creates LabelScaleSpinbox controls
+        
+        :param master: The Tk parent widget
+        '''
+
         self.pitch_control = LabelScaleSpinbox(
             master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller)
         self.pitch_control.pack()
@@ -318,8 +406,10 @@ class PositionFrame(tk.Frame):
             master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller)
         self.roll_control.pack()
 
-    #Starts updater function to update GUI based on current position
+
     def create_updater(self):
+        '''Starts updater function to update GUI based on current position'''
+
         self.update_thread = PositionUpdater(
             self.serial_arm_controller,
             self.pitch_control,
@@ -333,9 +423,14 @@ class PositionFrame(tk.Frame):
         self.update_thread.setDaemon(True)
         self.update_thread.start()
 
-    #Processes queue of position updates
-    #Uses this queue data to print new position to log file, and to update render position
+
     def process_queue(self):
+        '''
+        Processes queue of position updates
+    
+        Uses this queue data to print new position to log file, and to update render position
+        '''
+
         if(not (self.yaw_queue.empty() or self.pitch_queue.empty() or self.roll_queue.empty())):
             newYaw = self.yaw_queue.get(0)
             newPitch = self.pitch_queue.get(0)

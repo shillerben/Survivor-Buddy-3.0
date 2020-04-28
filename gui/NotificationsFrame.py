@@ -1,36 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 27 13:27:15 2020
-
-@author: shill
-"""
 
 import tkinter as tk
 import tkinter.ttk as ttk
 from datetime import datetime
 
-#Class for creating and controlling notification box
 class NotificationFrame(tk.Frame):
+    '''Box to display notification in the GUI'''
+
     def __init__(self, master, _logFile, **kwargs):
+        '''
+        The constructor for NotificationsFrame
+
+        :param master: The Tk parent widget
+        :param _logFile: The file handle for the output log file
+        '''
+
         super().__init__(master, **kwargs)
         
         self.logFile = _logFile
         self.label = ttk.Label(self, text="Notifications")
         self.label.pack()
-        #self.label.grid(row=0, rowspan=1, sticky="w")
         
         self.scrollbar = ttk.Scrollbar(self)
         self.scrollbar.pack(fill="x", expand=1)
-        #self.scrollbar.grid(row=1, rowspan=3, sticky="w")
         
         self.text = tk.Text(self.scrollbar, height=4)
         self.text.config(state=tk.DISABLED)
         self.text.pack()
-        #self.text.grid()
     
-    #Prints notification/warning to notification box
-    #Prints timestamped data to external log file
+
     def append_line(self, line):
+        '''
+        Prints a line to the notification box and 
+        a timestamped line to the log file
+        '''
+
         self.text.config(state=tk.NORMAL)
         self.text.insert(tk.END, line + "\n")
         now = datetime.now()

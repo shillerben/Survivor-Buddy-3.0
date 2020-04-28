@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 26 08:21:08 2020
-
-@author: Ben Shiller
-"""
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -17,7 +12,15 @@ import os.path
 
 
 class Application(tk.Frame):
+    '''The main GUI class'''
+
     def __init__(self, master, **kwargs):
+        '''
+        The constructor for the Application class
+
+        :param master: the Tk parent widget
+        '''
+
         super().__init__(master, **kwargs)
         self.pack()
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
@@ -39,6 +42,8 @@ class Application(tk.Frame):
         
         
     def create_widgets(self):
+        '''Creates the widgets seen in the GUI'''
+
         self.menu_bar = tk.Menu(self)
         self.create_menu(self.menu_bar)
         
@@ -54,11 +59,21 @@ class Application(tk.Frame):
         
         self.master.config(menu=self.menu_bar)
 
+
     def close_app(self):    #Had to make new quit function to close file
+        '''Closes the GUI application'''
+
         self.logFile.close()
         self.quit()
 
+
     def create_menu(self, root_menu):
+        '''
+        Creates the main GUI menu
+
+        :param root_menu: The root menu (self.menu_bar) that is instantiated in create_widgets()
+        '''
+
         # File Menu
         self.file_menu = tk.Menu(root_menu, tearoff=0)
         #self.file_menu.add_command(label="Preferences", command=self.hello)
@@ -83,6 +98,8 @@ class Application(tk.Frame):
 
 
     def refresh_devices(self):
+        '''Refreshes the Devices menu'''
+
         self.device_menu.delete(2, 100)
         self.serial_arm_controller.update_devs()
         if not self.serial_arm_controller.devs:
@@ -95,6 +112,12 @@ class Application(tk.Frame):
                 )        
             
     def connect(self, dev):
+        '''
+        Connects to the given device
+
+        :param dev: The serial device to connect to
+        '''
+
         self.serial_arm_controller.connect(dev[0])
         self.device_menu.add_command(
             label="Close Connection",
@@ -102,10 +125,17 @@ class Application(tk.Frame):
         )
     
     def close(self):
+        '''Closes the active serial connection'''
+
         self.device_menu.delete(2 + len(self.serial_arm_controller.devs))
         self.serial_arm_controller.close()
         
     def hello(self):
+        '''
+        A test function
+        
+        Simply prints "Hello from Menu" to the console and the NotificationsFrame
+        '''
         print("Hello from Menu")
         self.notifications_frame.append_line("Hello from Menu")
         

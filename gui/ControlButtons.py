@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 26 17:10:35 2020
-
-@author: Ben Shiller
-"""
 
 import tkinter as tk
 import tkinter.ttk as ttk
 
 
 class ControlButtons(tk.Frame):
+    '''Buttons to control the Survivor Buddy 3.0 arm'''
+
     def __init__(self, master, arm_controller, notifications, **kwargs):
+        '''
+        The constructor for ControlButtons
+
+        :param master: The Tk parent widget
+        :param arm_controller: The SerialArmController being used
+        :param notifications: The NotificationsFrame being used
+        '''
+
         super().__init__(master, **kwargs)
         self.serial_arm_controller = arm_controller
         self.notifications_frame = notifications
         self.open_close_status = "CLOSED"
         self.orientation = "PORTRAIT"
         self.create_buttons()
+
         
     def create_buttons(self):
+        '''Creates the control buttons displayed in the GUI'''
+
         self.top_frame = tk.Frame(self)
         self.top_frame.pack(fill="x")
         
@@ -64,44 +72,30 @@ class ControlButtons(tk.Frame):
             text="Shutdown", command=self.shutdown)
         self.shutdown_btn.pack(side="left")
         
-        '''
-        # Emergency Shutdown button
-        self.emergency_shutdown_btn = ttk.Button(self.bottom_frame,
-            text="Emergency Shutdown", command=self.hello)
-        self.emergency_shutdown_btn.pack(side="left")
-        #self.emergency_shutdown_btn.grid(row=1, column=2)
-        '''
-        
-    '''
-    def open_close_arm(self):
-        if self.serial_arm_controller.is_connected:
-            if self.open_close_status == "CLOSED":
-                print("Opening arm...")
-                self.serial_arm_controller.open_arm()
-                self.open_close_text.set("Close Arm")
-                self.open_close_status = "OPEN"
-            else:
-                print("Closing arm...")
-                self.serial_arm_controller.close_arm()
-                self.open_close_text.set("Open Arm")
-                self.open_close_status = "CLOSED"
-    '''
                 
     def open_arm(self):
+        '''Opens the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Opening arm...")
             self.serial_arm_controller.open_arm()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Opening arm...") #For offline testing
 
+
     def close_arm(self):
+        '''Closes the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Closing arm...")
             self.serial_arm_controller.close_arm()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Closing arm...") #For offline testing
+
                 
     def portrait(self):
+        '''Changes the arm to portrait mode using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Changing to portrait...")
             self.serial_arm_controller.portrait()
@@ -109,7 +103,10 @@ class ControlButtons(tk.Frame):
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Changing to portrait...") #For offline testing
                 
+
     def landscape(self):
+        '''Changes the arm to landscape mode using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Changing to landscape...")
             self.serial_arm_controller.landscape()
@@ -117,35 +114,43 @@ class ControlButtons(tk.Frame):
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Changing to landscape...") #For offline testing
                 
+
     def tilt(self):
+        '''Tilts the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Tilting head...")
             self.serial_arm_controller.tilt()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Tilting head...") #For offline testing
+
             
     def nod(self):
+        '''Nods the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Nodding head...")
             self.serial_arm_controller.nod()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Nodding head...") #For offline testing
+
             
     def shake(self):
+        '''Shakes the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Shaking head...")
             self.serial_arm_controller.shake()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Shaking head...") #For offline testing
 
+
     def shutdown(self):
+        '''Shuts down the arm using SerialArmController'''
+
         if self.serial_arm_controller.is_connected:
             self.notifications_frame.append_line("Shutting down...")
             self.serial_arm_controller._shutdown()
         else:
             self.notifications_frame.append_line("[DISCONNECTED] Shutting down...") #For offline testing
         
-    def hello(self):
-        print("Hello from ControlButtons")
-        self.master.notifications_frame.append_line("Hello from ControlButtons")
-

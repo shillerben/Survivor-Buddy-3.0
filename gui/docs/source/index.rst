@@ -6,15 +6,22 @@
 Welcome to Survivor Buddy 3.0's documentation!
 ==============================================
 
+
 .. toctree::
-   :maxdepth: 2
    :caption: Contents:
+   :numbered:
+
+   src/application.rst
+   src/controlbuttons.rst
+   src/notificationsframe.rst
+   src/positionframe.rst
+   src/serialarmcontroller.rst
+   src/statusbar.rst
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. Indices and tables
+.. ==================
+.. 
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
