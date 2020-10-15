@@ -7,6 +7,7 @@ from ControlButtons import ControlButtons
 from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
 from SerialArmController import SerialArmController
+from PhoneFeed import PhoneFeed
 from datetime import datetime   #For log file formatting
 import os.path
 import webbrowser
@@ -53,6 +54,9 @@ class Application(tk.Frame):
         
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
         self.control_buttons.pack(fill="x")
+
+        self.phone_feed = PhoneFeed(self)
+        self.phone_feed.pack(fill="x")
         
         self.notifications_frame.pack(fill="x")
         
@@ -152,8 +156,8 @@ class Application(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("800x600")
+    root.geometry("1200x900")
     app = Application(master=root)
-    app.master.title("Survivor Buddy 3.0")
+    app.master.title("Survivor Buddy 4.0")
     root.protocol("WM_DELETE_WINDOW", app.close_app)
     app.mainloop()
