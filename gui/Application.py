@@ -3,11 +3,12 @@ from tkinter import *
 import tkinter as tk
 import tkinter.ttk as ttk
 from PyQt5.QtWidgets import QApplication, QLabel
-from PositionFrame import PositionFrame
+from PositionFrame import *
 from ControlButtons import *
 from NotificationsFrame import NotificationFrame
 from StatusBar import StatusBar
 from SerialArmController import SerialArmController
+from SerialArmController import Command
 from datetime import datetime  # For log file formatting
 import os.path
 import webbrowser
@@ -17,7 +18,7 @@ import appscript  # added this
 
 class Application(tk.Frame):
     '''The main GUI class'''
-    counter = 0
+
 
     def __init__(self, master, **kwargs):
         '''
@@ -25,9 +26,11 @@ class Application(tk.Frame):
         :param master: the Tk parent widget
         '''
 
+
         super().__init__(master, **kwargs)
 
         self.pack()
+        #self.place()
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.config(padx=16, pady=16)
@@ -43,29 +46,35 @@ class Application(tk.Frame):
 
         self.serial_arm_controller = SerialArmController(self.status_bar, self.notifications_frame)
 
-        self.create_widgets()
-
-        # self.button = tk.Button(self, text="Create new window",
-        #                         command=self.create_window)
-        # self.button.pack(side="right")
-
-    def create_window(self):
-        self.counter += 1
-        app = QApplication([])
-        command = "python3 -m guiscrcpy"
-        # os.system("python3 -m guiscrcpy")
-        appscript.app('Terminal').do_script(command)
-        # p = subprocess.Popen(command,shell=True)
-        # p.wait()
-        app.exec_()
-
-    def create_widgets(self):
-        '''Creates the widgets seen in the GUI'''
-
         self.menu_bar = tk.Menu(self)
         self.create_menu(self.menu_bar)
 
-        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile)
+        top_frame = Frame(self)
+        top_frame.pack(fill="x")
+
+        # up_button = ttk.Button(self.top_frame,
+        #                        text="Move up")
+        # up_button.pack(side="top")
+
+        middle_frame = Frame(self)
+        middle_frame.pack()
+
+        # left_button = ttk.Button(self.middle_frame,
+        #                          text="Move left")
+        # left_button.pack(side="left")
+
+        # right_button = ttk.Button(self.middle_frame,
+        #                           text="Move right")
+        # right_button.pack(side="left")
+
+        bottom_frame = Frame(self)
+        bottom_frame.pack(fill="x")
+
+        # down_button = ttk.Button(self.bottom_frame,
+        #                          text="Move down")
+        # down_button.pack(side="top")
+
+        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile, top_frame, middle_frame, bottom_frame)
         self.position_frame.pack(fill="x")
 
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
@@ -76,6 +85,91 @@ class Application(tk.Frame):
         self.status_bar.pack(fill="x")
 
         self.master.config(menu=self.menu_bar)
+
+        # self.button = tk.Button(self, text="Create new window",
+        #                         command=self.create_window)
+        # self.button.pack(side="right")
+    def create_window(self):
+        self.counter += 1
+        app = QApplication([])
+        command = "python3 -m guiscrcpy"
+        # os.system("python3 -m guiscrcpy")
+        appscript.app('Terminal').do_script(command)
+        # p = subprocess.Popen(command,shell=True)
+        # p.wait()
+        app.exec_()
+    #
+    # def start_move_up(self):
+    #     pos = self.serial_arm_controller.recv()
+    #
+    #     if pos:
+    #         pitch = int[pos[0]]
+    #         print(pitch)
+    #         if pitch < 90:
+    #             self.serial_arm_controller.set_pitch(pos[0])
+    #         else:
+    #             self.notifications_frame.append_line("already at max pitch")
+
+        # global running
+        # running = True
+
+    # def stop_move_up(self):
+    # def move_up(self):
+    #     pos = self.serial_arm_controller.recv()
+    #     if pos:
+    #         self.up_counter = int(pos[0])
+    #         self.up_counter = self.up_counter + 1
+    #         print(self.up_counter)
+
+
+
+
+    # def create_widgets(self):
+        '''Creates the widgets seen in the GUI'''
+
+        # self.menu_bar = tk.Menu(self)
+        # self.create_menu(self.menu_bar)
+        #
+        # self.top_frame = Frame(self)
+        # self.top_frame.pack(fill="x")
+        #
+        # up_button = ttk.Button(self.top_frame,
+        #     text="Move up")
+        # up_button.pack(side="top")
+        #
+        # self.middle_frame = Frame(self)
+        # self.middle_frame.pack(fill="x")
+        #
+        # left_button = ttk.Button(self.middle_frame,
+        #     text="Move left")
+        # left_button.pack(side="left")
+        #
+        #
+        # videoFrame = Frame(self.middle_frame, height = 400, width = 600, bg = 'grey')
+        # videoFrame.pack(side='left', expand = True, pady = 5)
+        #
+        # right_button = ttk.Button(self.middle_frame,
+        #                          text="Move right")
+        # right_button.pack(side="left")
+        #
+        # self.bottom_frame = Frame(self)
+        # self.bottom_frame.pack(fill="x")
+        #
+        # down_button = ttk.Button(self.bottom_frame,
+        #                           text="Move down")
+        # down_button.pack(side="top")
+        #
+        # self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile)
+        # self.position_frame.pack(fill="x")
+        #
+        # self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
+        # self.control_buttons.pack(fill="x")
+        #
+        # self.notifications_frame.pack(fill="x")
+        #
+        # self.status_bar.pack(fill="x")
+        #
+        # self.master.config(menu=self.menu_bar)
 
     def close_app(self):  # Had to make new quit function to close file
         '''Closes the GUI application'''
@@ -173,7 +267,8 @@ def create_window():
 
 if __name__ == "__main__":
     root = Tk()
-    root.geometry("1000x800")
+
+    root.geometry("1000x1080")
     # now = datetime.now()  # Create unique logfile for notifications and errors
     # timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
     # file_name = 'LOGFILE_' + timestamp + '.txt'

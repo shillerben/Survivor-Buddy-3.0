@@ -1,0 +1,16 @@
+15:22:07 - Position: P: 0 Y: 0 R: 0
+15:22:13 - Position: P: 0 Y: 0 R: 0
+15:22:16 - Position: P: 11 Y: -7 R: 0
+15:22:17 - Position: P: 37 Y: -5 R: 0
+15:22:21 - Position: P: 37 Y: -7 R: 0
+15:22:22 - Position: P: 37 Y: -5 R: 0
+15:22:24 - Position: P: 36 Y: -5 R: 0
+15:22:27 - Position: P: 36 Y: -3 R: 0
+15:22:28 - Position: P: 36 Y: -5 R: 0
+15:22:29 - Position: P: 36 Y: -3 R: 0
+15:22:31 - Position: P: 36 Y: -5 R: 0
+15:22:32 - Position: P: 36 Y: -7 R: 0
+15:22:33 - Position: P: 36 Y: -5 R: 0
+15:22:36 - Position: P: 36 Y: -6 R: 0
+15:22:37 - Shutting down...
+15:22:42 - Position: P: 36 Y: -6 R: 0

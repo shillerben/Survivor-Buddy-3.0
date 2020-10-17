@@ -1,0 +1,8 @@
+15:11:20 - Position: P: 0 Y: 0 R: 0
+15:11:24 - Position: P: 0 Y: 0 R: 0
+15:11:26 - Position: P: 2 Y: -6 R: 0
+15:11:27 - Position: P: 8 Y: -4 R: 0
+15:11:28 - Position: P: 8 Y: -2 R: 0
+15:11:30 - Position: P: 8 Y: -1 R: 0
+15:11:31 - Position: P: 8 Y: -4 R: 0
+15:11:32 - Shutting down...

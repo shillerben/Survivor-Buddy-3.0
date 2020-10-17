@@ -1,0 +1,11 @@
+14:03:25 - Position: P: 0 Y: 0 R: 0
+14:03:30 - Position: P: 0 Y: 0 R: 0
+14:03:32 - Position: P: 0 Y: -3 R: 0
+14:03:33 - Position: P: 35 Y: 1 R: 0
+14:03:34 - WARNING: DEVICE DISCONNECTED
+14:03:34 - Position: P: 35 Y: 1 R: 0
+14:03:41 - Position: P: 19 Y: 1 R: 0
+14:03:42 - Position: P: 11 Y: 1 R: 0
+14:03:43 - Position: P: 5 Y: 1 R: 0
+14:03:43 - Position: P: 0 Y: 1 R: 0
+14:03:45 - Position: P: 68 Y: 1 R: 0
