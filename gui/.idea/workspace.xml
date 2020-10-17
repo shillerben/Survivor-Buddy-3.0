@@ -4,8 +4,6 @@
     <list default="true" id="bba04e54-a210-421b-8c69-be0149ea0c3f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Application.py" beforeDir="false" afterPath="$PROJECT_DIR$/Application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PositionFrame.py" beforeDir="false" afterPath="$PROJECT_DIR$/PositionFrame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SerialArmController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SerialArmController.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

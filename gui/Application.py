@@ -13,6 +13,7 @@ from datetime import datetime  # For log file formatting
 import os.path
 import webbrowser
 import subprocess
+import threading
 import appscript  # added this
 
 
@@ -256,14 +257,14 @@ class Application(tk.Frame):
 
 
 def create_window():
-    app = QApplication([])
+    #app = QApplication([])
     command = "python3 -m guiscrcpy"
     # os.system("python3 -m guiscrcpy")
     appscript.app('Terminal').do_script(command)
+
     # p = subprocess.Popen(command,shell=True)
     # p.wait()
-    app.exec_()
-
+    #app.exec_()
 
 if __name__ == "__main__":
     root = Tk()
