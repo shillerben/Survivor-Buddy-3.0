@@ -169,7 +169,8 @@ class Player(Tk.Frame):
 
         self.parent = parent  # == root
         self.parent.title(title or "tkVLCplayer")
-        self.video = expanduser(video)
+        # self.video = expanduser(video)
+        self.video = video
 
         # Menu Bar
         #   File Menu
@@ -354,7 +355,7 @@ class Player(Tk.Frame):
 
     def _Play(self, video):
         # helper for OnOpen and OnPlay
-        if isfile(video):  # Creation
+        # if isfile(video):  # Creation
             m = self.Instance.media_new(str(video))  # Path, unicode
             self.player.set_media(m)
             self.parent.title("tkVLCplayer - %s" % (basename(video),))
@@ -551,7 +552,8 @@ if __name__ == "__main__":
             if not isfile(_video):
                 print('%s error: no such file: %r' % (sys.argv[0], arg))
                 sys.exit(1)
-    _video = expanduser('cdr-presentation.mp4')
+    serverString = 'rtsp://10.0.0.119:1935/'
+    _video = expanduser(serverString)
 
     # Create a Tk.App() to handle the windowing event loop
     root = Tk.Tk()
