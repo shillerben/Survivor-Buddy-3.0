@@ -1,0 +1,9 @@
+15:30:05 - Position: P: 0 Y: 0 R: 0
+15:30:12 - Position: P: 0 Y: 0 R: 0
+15:30:12 - Position: P: 0 Y: -3 R: 0
+15:30:13 - Position: P: 0 Y: -7 R: 0
+15:30:17 - Position: P: 0 Y: -3 R: 0
+15:30:18 - Position: P: 0 Y: -5 R: 0
+15:30:19 - Position: P: 0 Y: -6 R: 0
+15:30:21 - Position: P: 0 Y: -5 R: 0
+15:30:22 - Position: P: 0 Y: -5 R: 0

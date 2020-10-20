@@ -1,0 +1,21 @@
+15:10:40 - Position: P: 0 Y: 0 R: 0
+15:10:51 - Position: P: 0 Y: 0 R: 0
+15:10:53 - Position: P: 0 Y: -4 R: 0
+15:10:54 - Position: P: 0 Y: -5 R: 0
+15:10:55 - Position: P: 0 Y: -3 R: 0
+15:10:56 - Position: P: 0 Y: -6 R: 0
+15:10:57 - Position: P: 0 Y: -5 R: 0
+15:10:58 - Position: P: 0 Y: -4 R: 0
+15:10:59 - Position: P: 0 Y: -7 R: 0
+15:11:00 - Position: P: 0 Y: -11 R: 0
+15:11:01 - Position: P: 0 Y: -10 R: 0
+15:11:02 - Position: P: 0 Y: -9 R: 0
+15:11:04 - Position: P: 0 Y: -11 R: 0
+15:11:06 - Closing arm...
+15:11:06 - WARNING: ARM ALREADY CLOSED
+15:11:07 - Closing arm...
+15:11:07 - WARNING: ARM ALREADY CLOSED
+15:11:07 - Position: P: 0 Y: -10 R: 0
+15:11:08 - Position: P: 0 Y: -14 R: 0
+15:11:09 - Shutting down...
+15:11:13 - Position: P: 0 Y: -14 R: 0

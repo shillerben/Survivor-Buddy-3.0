@@ -1,0 +1,34 @@
+13:08:51 - Position: P: 0 Y: 0 R: 0
+13:08:57 - Position: P: 0 Y: 0 R: 0
+13:08:58 - Opening arm...
+13:09:00 - Position: P: 90 Y: -7 R: 0
+13:09:03 - Position: P: 56 Y: -3 R: 0
+13:09:04 - Position: P: 90 Y: -6 R: 0
+13:09:05 - Position: P: 90 Y: -3 R: 0
+13:09:06 - Position: P: 90 Y: -7 R: 0
+13:09:07 - Position: P: 90 Y: 20 R: 0
+13:09:09 - Position: P: 90 Y: 27 R: 0
+13:09:10 - Position: P: 90 Y: 22 R: 0
+13:09:12 - Position: P: 90 Y: -87 R: 0
+13:09:13 - Position: P: 90 Y: -90 R: 0
+13:09:14 - Position: P: 90 Y: -87 R: 0
+13:09:16 - Position: P: 90 Y: -86 R: 0
+13:09:17 - Position: P: 90 Y: -90 R: 0
+13:09:19 - Position: P: 90 Y: 89 R: 0
+13:09:21 - Position: P: 90 Y: 90 R: 0
+13:09:23 - Position: P: 90 Y: 88 R: 0
+13:09:25 - Position: P: 90 Y: 83 R: 0
+13:09:26 - Position: P: 90 Y: 86 R: 0
+13:09:27 - Position: P: 90 Y: 90 R: 0
+13:09:28 - Position: P: 90 Y: 87 R: 0
+13:09:31 - Position: P: 90 Y: 88 R: 0
+13:09:34 - Position: P: 90 Y: 87 R: 0
+13:09:37 - Position: P: 90 Y: 88 R: 0
+13:09:39 - Position: P: 90 Y: 87 R: 0
+13:09:41 - Position: P: 90 Y: 90 R: 0
+13:09:42 - Position: P: 90 Y: 88 R: 0
+13:09:44 - Position: P: 90 Y: -87 R: 0
+13:09:45 - Position: P: 90 Y: -90 R: 0
+13:09:47 - Position: P: 90 Y: -2 R: 0
+13:09:47 - Shutting down...
+13:09:51 - Position: P: 90 Y: -2 R: 0

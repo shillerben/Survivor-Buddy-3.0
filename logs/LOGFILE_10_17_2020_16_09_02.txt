@@ -1,0 +1,7 @@
+16:09:03 - Position: P: 0 Y: 0 R: 0
+16:09:05 - Position: P: 0 Y: 1 R: 0
+16:09:05 - Position: P: 0 Y: 2 R: 0
+16:09:06 - Position: P: 0 Y: 3 R: 0
+16:09:06 - Position: P: 0 Y: 4 R: 0
+16:09:06 - Position: P: 0 Y: 5 R: 0
+16:09:06 - Position: P: 0 Y: 6 R: 0
