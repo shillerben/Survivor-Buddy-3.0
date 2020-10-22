@@ -9,6 +9,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from threading import Thread
 from datetime import datetime
+from tkvlc import Player
+from tkvlc import _Tk_Menu
+from os.path import expanduser
 import time
 import queue
 import Application
@@ -82,7 +85,7 @@ class PositionUpdater(Thread):
 class LabelScaleSpinbox(tk.Frame):
     '''A custom class to combine Tk Scale and Spinbox and keep them in sync'''
 
-    def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, up=False, down=False, left=False, right=False, top_frame=None, middle_frame=None, bottom_frame=None, **kwargs):
+    def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, up=False, down=False, left=False, right=False, top_frame=None, middle_frame=None, bottom_frame=None, root=None, **kwargs):
         '''
         Constructor for LabelScaleSpinbox
         
@@ -126,6 +129,8 @@ class LabelScaleSpinbox(tk.Frame):
         self.spinbox.set(self.current_value)
         self.spinbox.pack(side="left")
 
+        self.root = root
+
         if up:
             self.up_button = ttk.Button(top_frame,
                                    text="Move up", command=self.increment)
@@ -135,8 +140,17 @@ class LabelScaleSpinbox(tk.Frame):
             self.left_button = ttk.Button(middle_frame,
                                           text="Move left", command=self.increment)
             self.left_button.pack(side="left")
-            videoFrame = tk.Frame(middle_frame, height=400, width=600, bg='grey')
-            videoFrame.pack(side='left', expand=True, pady=5)
+            # videoFrame = tk.Frame(middle_frame, height=400, width=600, bg='grey')
+            # videoFrame.pack(side='left', expand=True, pady=5)
+            serverString = 'rtsp://10.0.0.119:1935/'
+            _video = expanduser(serverString)
+            
+            player = Player(self.root, video=_video)
+            player.pack(side='left', expand=True, pady=5)
+            print("player pack")
+            player._Play(_video)
+            print("player play")
+
             self.right_button = ttk.Button(middle_frame,
                                            text="Move right", command=self.decrement)
             self.right_button.pack(side="left")
@@ -374,7 +388,7 @@ class RenderDiagram(tk.Frame):
 class PositionFrame(tk.Frame):
     '''Creates the Render and Control Sliders in the GUI'''
 
-    def __init__(self, master, arm_controller, _logFile, top_frame, middle_frame, bottom_frame, **kwargs):
+    def __init__(self, master, arm_controller, _logFile, top_frame, middle_frame, bottom_frame, root, **kwargs):
         '''
         Constructor for PositionFrame
         
@@ -393,6 +407,8 @@ class PositionFrame(tk.Frame):
         self.middle_frame = middle_frame
         self.bottom_frame = bottom_frame
 
+        self.root = root
+
         self.render_frame = tk.Frame(self)
         self.render_frame.pack(side="left")
         self.create_render(self.render_frame)
@@ -408,6 +424,7 @@ class PositionFrame(tk.Frame):
         self.create_updater()
         self.frame_master = self.render_frame    #s.t. master does not have to be passed to process queue
         self.master.after(100, self.process_queue)
+
 
 
 
@@ -432,15 +449,15 @@ class PositionFrame(tk.Frame):
         '''
 
         self.pitch_control = LabelScaleSpinbox(
-            master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller, up=True, down=True, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame)
+            master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller, up=True, down=True, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
         self.pitch_control.pack()
         
         self.yaw_control = LabelScaleSpinbox(
-            master, text="Yaw: ", from_=-90, to=90, axis=1, dev=self.serial_arm_controller, up=False, down=False, left=True, right = True, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame)
+            master, text="Yaw: ", from_=-90, to=90, axis=1, dev=self.serial_arm_controller, up=False, down=False, left=True, right = True, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
         self.yaw_control.pack()
         
         self.roll_control = LabelScaleSpinbox(
-            master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller, up=False, down=False, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame)
+            master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller, up=False, down=False, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
         self.roll_control.pack()
 
 

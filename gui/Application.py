@@ -29,7 +29,7 @@ class Application(tk.Frame):
 
 
         super().__init__(master, **kwargs)
-
+        self.theroot = master
         self.pack()
         #self.place()
         self.taskbar_icon = tk.PhotoImage(file="SBLogo.png")
@@ -75,7 +75,7 @@ class Application(tk.Frame):
         #                          text="Move down")
         # down_button.pack(side="top")
 
-        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile, top_frame, middle_frame, bottom_frame)
+        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile, top_frame, middle_frame, bottom_frame, self.theroot)
         self.position_frame.pack(fill="x")
 
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)

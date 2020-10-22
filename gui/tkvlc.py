@@ -172,6 +172,8 @@ class Player(Tk.Frame):
         # self.video = expanduser(video)
         self.video = video
 
+        print("player init")
+
         # Menu Bar
         #   File Menu
         menubar = Tk.Menu(self.parent)
@@ -358,7 +360,7 @@ class Player(Tk.Frame):
         # if isfile(video):  # Creation
             m = self.Instance.media_new(str(video))  # Path, unicode
             self.player.set_media(m)
-            self.parent.title("tkVLCplayer - %s" % (basename(video),))
+            # self.parent.title("tkVLCplayer - %s" % (basename(video),))
 
             # set the window id where to render VLC's video output
             h = self.videopanel.winfo_id()  # .winfo_visualid()?
