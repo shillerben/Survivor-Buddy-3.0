@@ -140,16 +140,16 @@ class LabelScaleSpinbox(tk.Frame):
             self.left_button = ttk.Button(middle_frame,
                                           text="Move left", command=self.increment)
             self.left_button.pack(side="left")
-            # videoFrame = tk.Frame(middle_frame, height=400, width=600, bg='grey')
-            # videoFrame.pack(side='left', expand=True, pady=5)
-            serverString = 'rtsp://10.0.0.119:1935/'
+            videoFrame = tk.Frame(middle_frame, height=400, width=600, bg='grey')
+            videoFrame.pack(side='left', expand=True, pady=5)
+            serverString = 'rtsp://192.168.43.166:1935/'
             _video = expanduser(serverString)
             
             player = Player(self.root, video=_video)
             player.pack(side='left', expand=True, pady=5)
             print("player pack")
-            player._Play(_video)
-            print("player play")
+            # player._Play(_video)
+            # print("player play")
 
             self.right_button = ttk.Button(middle_frame,
                                            text="Move right", command=self.decrement)

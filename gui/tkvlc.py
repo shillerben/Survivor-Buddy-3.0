@@ -358,6 +358,7 @@ class Player(Tk.Frame):
     def _Play(self, video):
         # helper for OnOpen and OnPlay
         # if isfile(video):  # Creation
+            print("vlc play")
             m = self.Instance.media_new(str(video))  # Path, unicode
             self.player.set_media(m)
             # self.parent.title("tkVLCplayer - %s" % (basename(video),))
@@ -379,6 +380,8 @@ class Player(Tk.Frame):
             else:
                 self.player.set_xwindow(h)  # fails on Windows
             # FIXME: this should be made cross-platform
+            print("about to play")
+            time.sleep(5)
             self.OnPlay()
 
     def OnPause(self, *unused):
@@ -400,6 +403,7 @@ class Player(Tk.Frame):
                 self._Play(expanduser(self.video))
                 self.video = ''
             else:
+                print("opening !!")
                 self.OnOpen()
         # Try to play, if this fails display an error message
         elif self.player.play():  # == -1
@@ -554,7 +558,7 @@ if __name__ == "__main__":
             if not isfile(_video):
                 print('%s error: no such file: %r' % (sys.argv[0], arg))
                 sys.exit(1)
-    serverString = 'rtsp://10.0.0.119:1935/'
+    serverString = 'rtsp://172.20.20.20:1935/'
     _video = expanduser(serverString)
 
     # Create a Tk.App() to handle the windowing event loop
