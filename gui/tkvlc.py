@@ -558,7 +558,7 @@ if __name__ == "__main__":
             if not isfile(_video):
                 print('%s error: no such file: %r' % (sys.argv[0], arg))
                 sys.exit(1)
-    serverString = 'rtsp://172.20.20.20:1935/'
+    serverString = 'rtsp://192.168.1.5:1935/'
     _video = expanduser(serverString)
 
     # Create a Tk.App() to handle the windowing event loop

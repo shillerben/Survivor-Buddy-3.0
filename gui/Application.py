@@ -14,7 +14,7 @@ import os.path
 import webbrowser
 import subprocess
 import threading
-import appscript  # added this
+# import appscript  # added this
 
 
 class Application(tk.Frame):
@@ -260,7 +260,7 @@ def create_window():
     #app = QApplication([])
     command = "python3 -m guiscrcpy"
     # os.system("python3 -m guiscrcpy")
-    appscript.app('Terminal').do_script(command)
+    # appscript.app('Terminal').do_script(command)
 
     # p = subprocess.Popen(command,shell=True)
     # p.wait()
@@ -287,9 +287,9 @@ if __name__ == "__main__":
     # app.create_menu(menu_bar)
     # position_frame = PositionFrame(master = root,arm_controller=serial_arm_controller, _logFile=logFile)
 
-    button = Button(root, text="Create new window",
-                    command=create_window)
-    button.place(x=500, y=700)
+    # button = Button(root, text="Create new window",
+    #                 command=create_window)
+    # button.place(x=500, y=700)
 
     # bottom right buttons
     # button_frame = Frame(root, height=245, width=150, highlightbackground="black", highlightthickness=1)
