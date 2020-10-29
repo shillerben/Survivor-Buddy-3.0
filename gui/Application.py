@@ -76,7 +76,7 @@ class Application(tk.Frame):
         text_frame.pack(fill="x")
         host = '192.168.1.31'
         port = 5050
-        self.bmc = BuddyMessageClient(host, port)
+        self.bmc = BuddyMessageClient(host, port, self.master)
         # textbox = ttk.Label(root, text="text")
         # textbox.place(x=800, y=300)
         self.name = tk.StringVar()
@@ -106,6 +106,7 @@ class Application(tk.Frame):
 
     def send_text(self):
         self.bmc.sendMsg(self.name.get())
+
     def create_window(self):
         self.counter += 1
         app = QApplication([])
