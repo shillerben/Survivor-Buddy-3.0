@@ -10,6 +10,7 @@ from StatusBar import StatusBar
 from SerialArmController import SerialArmController
 from SerialArmController import Command
 from datetime import datetime  # For log file formatting
+from BuddyMessageClient import BuddyMessageClient
 import os.path
 import webbrowser
 import subprocess
@@ -71,6 +72,18 @@ class Application(tk.Frame):
         bottom_frame = Frame(self)
         bottom_frame.pack(fill="x")
 
+        text_frame = Frame(self)
+        text_frame.pack(fill="x")
+        host = '192.168.1.31'
+        port = 5050
+        self.bmc = BuddyMessageClient(host, port)
+        # textbox = ttk.Label(root, text="text")
+        # textbox.place(x=800, y=300)
+        self.name = tk.StringVar()
+        self.nameEntered = ttk.Entry(text_frame, width=15, textvariable=self.name)
+        self.send_button = ttk.Button(text_frame, text="send text", command=self.send_text)
+        self.send_button.pack(side='right')
+        self.nameEntered.pack(side='right')
         # down_button = ttk.Button(self.bottom_frame,
         #                          text="Move down")
         # down_button.pack(side="top")
@@ -90,6 +103,9 @@ class Application(tk.Frame):
         # self.button = tk.Button(self, text="Create new window",
         #                         command=self.create_window)
         # self.button.pack(side="right")
+
+    def send_text(self):
+        self.bmc.sendMsg(self.name.get())
     def create_window(self):
         self.counter += 1
         app = QApplication([])
@@ -266,10 +282,11 @@ def create_window():
     # p.wait()
     #app.exec_()
 
+
 if __name__ == "__main__":
     root = Tk()
 
-    root.geometry("1000x1080")
+    root.geometry("1100x900")
     # now = datetime.now()  # Create unique logfile for notifications and errors
     # timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
     # file_name = 'LOGFILE_' + timestamp + '.txt'

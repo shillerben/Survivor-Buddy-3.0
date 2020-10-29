@@ -116,7 +116,7 @@ class LabelScaleSpinbox(tk.Frame):
         self.slider.pack(side="left")
         
         self.to_label = ttk.Label(self, text=str(to))
-        self.to_label.pack(side="left")
+        self.to_label.pack(side="left")  
         
         spinbox_vcmd = self.register(self.validate_spinbox)
         spinbox_ivcmd = self.register(self.invalid_spinbox)
@@ -144,10 +144,10 @@ class LabelScaleSpinbox(tk.Frame):
             # videoFrame.pack(side='left', expand=True, pady=5)
             serverString = 'rtsp://192.168.1.5:1935/'
             _video = expanduser(serverString)
-            player = Player(self.root, video=_video)
-            player.pack(side='left', expand=True, pady=5)
-            print("player pack")
-            player._Play(_video)
+            # player = Player(self.root, video=_video)
+            # player.pack(side='left', expand=True, pady=5)
+            # print("player pack")
+            # player._Play(_video)
             # print("player play")
 
             self.right_button = ttk.Button(middle_frame,
