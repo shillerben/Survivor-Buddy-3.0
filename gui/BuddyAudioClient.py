@@ -50,6 +50,7 @@ class BuddyAudioClient:
 
     def disconnect(self):
         self.client_socket.close()
+        self.client_socket = None
 
     def handleStream(self):
         
@@ -64,7 +65,12 @@ class BuddyAudioClient:
         self.continue_stream = True
         while self.continue_stream:
             audio_data = self.audio_stream.read(self.chunk_size)
-            self.client_socket.sendall(audio_data)
+            if(self.client_socket is None):
+                break
+            elif(self.client_socket._closed):
+                break
+            else:
+                self.client_socket.sendall(audio_data)
 
     def startStream(self):
         threading.Thread(target=self.handleStream).start()
