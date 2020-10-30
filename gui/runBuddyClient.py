@@ -1,9 +1,8 @@
-from BuddyMessageClient import BuddyMessageClient
+from BuddyAudioClient import BuddyAudioClient
 
 host = '192.168.1.31'
 port = 5050
-myBuddyClient = BuddyMessageClient(host,port)
-
-while True:
-    my_str = input('Enter input: ')
-    myBuddyClient.sendMsg(my_str)
+mbac = BuddyAudioClient(host, port)
+mbac.connect()
+print("Connected")
+mbac.startStream()
