@@ -1,5 +1,6 @@
 import pyaudio
 import socket
+import threading
 
 class BuddyAudioClient:
 
@@ -14,7 +15,7 @@ class BuddyAudioClient:
         self.port_num = port
         self.server_addr = (self.server_ip, self.port_num)
         self.client_socket = None
-        self.conntinue_stream = None
+        self.continue_stream = None
 
         self.audio_handler = pyaudio.PyAudio()
         self.device_api_info = self.audio_handler.get_default_host_api_info()
@@ -28,7 +29,7 @@ class BuddyAudioClient:
 
         self.audio_stream = None
 
-    def _connect(self):
+    def handleConnect(self):
         if(self.client_socket == None):
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -44,10 +45,13 @@ class BuddyAudioClient:
         
         return True
 
+    def connect(self):
+        threading.Thread(target=self.handleConnect).start()
+
     def disconnect(self):
         self.client_socket.close()
 
-    def _startStream(self):
+    def handleStream(self):
         
         self.audio_stream = self.audio_handler.open(
             format=self.audio_handler.get_format_from_width(self.width),
@@ -57,15 +61,16 @@ class BuddyAudioClient:
             frames_per_buffer=self.chunk_size
         )
 
-        while True:
+        self.continue_stream = True
+        while self.continue_stream:
             audio_data = self.audio_stream.read(self.chunk_size)
             self.client_socket.sendall(audio_data)
 
-    def stopStream(self):
-        pass
+    def startStream(self):
+        threading.Thread(target=self.handleStream).start()
 
-    def disconnect(self):
-        self.client_socket.close()
+    def stopStream(self):
+        self.continue_stream = False
 
     def setInputDevice(self):
         pass
