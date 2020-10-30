@@ -34,9 +34,9 @@ class BuddyAudioClient:
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.client_socket.connect(self.server_addr)
-        #except ConnectionRefusedError:
-        #    print("Error: ConnRefused")
-        #    return False
+        except ConnectionRefusedError:
+            print("Error: ConnRefused")
+            return False
         except TimeoutError:
             print("Error: Timeout")
             return False
