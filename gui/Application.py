@@ -14,6 +14,8 @@ from BuddyMessageClient import BuddyMessageClient
 import os.path
 import webbrowser
 import subprocess
+from BuddyAudioClient import BuddyAudioClient
+
 import threading
 # import appscript  # added this
 
@@ -76,6 +78,10 @@ class Application(tk.Frame):
         text_frame.pack(fill="x")
         host = '192.168.1.31'
         port = 5050
+
+        self.mbac = BuddyAudioClient(host, port)
+
+
         self.bmc = BuddyMessageClient(host, port, self.master)
         # textbox = ttk.Label(root, text="text")
         # textbox.place(x=800, y=300)
@@ -107,15 +113,7 @@ class Application(tk.Frame):
     def send_text(self):
         self.bmc.sendMsg(self.name.get())
 
-    def create_window(self):
-        self.counter += 1
-        app = QApplication([])
-        command = "python3 -m guiscrcpy"
-        # os.system("python3 -m guiscrcpy")
-        appscript.app('Terminal').do_script(command)
-        # p = subprocess.Popen(command,shell=True)
-        # p.wait()
-        app.exec_()
+
     #
     # def start_move_up(self):
     #     pos = self.serial_arm_controller.recv()
@@ -195,6 +193,13 @@ class Application(tk.Frame):
         self.logFile.close()
         self.quit()
 
+    def connect_to_audio(self):
+        self.mbac.connect()
+        self.mbac.startStream()
+    def disconnect_to_audio(self):
+        self.mbac.stopStream()
+        self.mbac.disconnect()
+
     def create_menu(self, root_menu):
         '''
         Creates the main GUI menu
@@ -221,6 +226,12 @@ class Application(tk.Frame):
         self.help_menu.add_command(label="User Manual", command=self.open_user_manual)
         self.help_menu.add_command(label="Programmer's Reference", command=self.open_programmer_reference)
         root_menu.add_cascade(label="Help", menu=self.help_menu)
+
+        #Audio Menu
+        self.audio_menu = tk.Menu(root_menu, tearoff=0)
+        self.audio_menu.add_command(label="Connect Audio", command=self.connect_to_audio)
+        self.audio_menu.add_command(label="Disconnect Audio", command=self.disconnect_to_audio)
+        root_menu.add_cascade(label="Audio", menu=self.audio_menu)
 
     def refresh_devices(self):
         '''Refreshes the Devices menu'''
