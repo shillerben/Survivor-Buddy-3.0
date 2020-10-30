@@ -125,6 +125,7 @@ class BuddyAudioClient:
             print("ERROR: Device not found")
 
         self.input_device_index = chosen_dict['index']
+        self.num_input_channels = chosen_dict['maxInputChannels']
 
         
             
