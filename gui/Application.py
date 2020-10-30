@@ -51,6 +51,8 @@ class Application(tk.Frame):
         self.serial_arm_controller = SerialArmController(self.status_bar, self.notifications_frame)
 
         self.menu_bar = tk.Menu(self)
+
+        self.device_arr = ['audio1', 'audio2', 'audio3']
         self.create_menu(self.menu_bar)
 
         top_frame = Frame(self)
@@ -76,7 +78,7 @@ class Application(tk.Frame):
 
         text_frame = Frame(self)
         text_frame.pack(fill="x")
-        host = '192.168.42.129'
+        host = '192.168.1.31'
         port = 5050
 
         self.mbac = BuddyAudioClient(host, port)
@@ -197,7 +199,8 @@ class Application(tk.Frame):
         self.mbac.connectAndStart()
     def disconnect_to_audio(self):
         self.mbac.disconnectAndStop()
-
+    def change_audio(self):
+        pass
     def create_menu(self, root_menu):
         '''
         Creates the main GUI menu
@@ -230,6 +233,12 @@ class Application(tk.Frame):
         self.audio_menu.add_command(label="Connect Audio", command=self.connect_to_audio)
         self.audio_menu.add_command(label="Disconnect Audio", command=self.disconnect_to_audio)
         root_menu.add_cascade(label="Audio", menu=self.audio_menu)
+
+        #Audio Devices
+        self.audio_devices_menu = tk.Menu(root_menu, tearoff=0)
+        for device in self.device_arr:
+            self.audio_devices_menu.add_command(label=device, command=self.change_audio)
+        root_menu.add_cascade(label="Audio Devices", menu=self.audio_devices_menu)
 
     def refresh_devices(self):
         '''Refreshes the Devices menu'''
