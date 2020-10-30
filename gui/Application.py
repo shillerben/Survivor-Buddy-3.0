@@ -39,6 +39,11 @@ class Application(tk.Frame):
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.config(padx=16, pady=16)
 
+        host = '192.168.1.31'
+        port = 5050
+
+        self.mbac = BuddyAudioClient(host, port)
+        self.microphone = ""
         now = datetime.now()  # Create unique logfile for notifications and errors
         timestamp = now.strftime("%m_%d_%Y_%H_%M_%S")
         file_name = 'LOGFILE_' + timestamp + '.txt'
@@ -52,7 +57,7 @@ class Application(tk.Frame):
 
         self.menu_bar = tk.Menu(self)
 
-        self.device_arr = ['audio1', 'audio2', 'audio3']
+        self.device_arr = self.mbac.getInputDeviceNames()
         self.create_menu(self.menu_bar)
 
         top_frame = Frame(self)
@@ -78,10 +83,7 @@ class Application(tk.Frame):
 
         text_frame = Frame(self)
         text_frame.pack(fill="x")
-        host = '192.168.1.31'
-        port = 5050
 
-        self.mbac = BuddyAudioClient(host, port)
 
         self.bmc = BuddyMessageClient(host, port, self.master)
         # textbox = ttk.Label(root, text="text")
@@ -196,10 +198,15 @@ class Application(tk.Frame):
 
     def connect_to_audio(self):
         self.mbac.connectAndStart()
+
     def disconnect_to_audio(self):
         self.mbac.disconnectAndStop()
-    def change_audio(self):
-        pass
+
+    def change_audio(self, device):
+        self.mbac.disconnectAndStop()
+        self.mbac.setInputDevice(device)
+        self.mbac.connectAndStart()
+
     def create_menu(self, root_menu):
         '''
         Creates the main GUI menu
@@ -236,7 +243,7 @@ class Application(tk.Frame):
         #Audio Devices
         self.audio_devices_menu = tk.Menu(root_menu, tearoff=0)
         for device in self.device_arr:
-            self.audio_devices_menu.add_command(label=device, command=self.change_audio)
+            self.audio_devices_menu.add_command(label=device, command=lambda: self.change_audio(device))
         root_menu.add_cascade(label="Audio Devices", menu=self.audio_devices_menu)
 
     def refresh_devices(self):
