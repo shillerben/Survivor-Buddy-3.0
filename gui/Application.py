@@ -76,7 +76,7 @@ class Application(tk.Frame):
 
         text_frame = Frame(self)
         text_frame.pack(fill="x")
-        host = '192.168.1.31'
+        host = '192.168.42.129'
         port = 5050
 
         self.mbac = BuddyAudioClient(host, port)
@@ -194,11 +194,9 @@ class Application(tk.Frame):
         self.quit()
 
     def connect_to_audio(self):
-        self.mbac.connect()
-        self.mbac.startStream()
+        self.mbac.connectAndStart()
     def disconnect_to_audio(self):
-        self.mbac.stopStream()
-        self.mbac.disconnect()
+        self.mbac.disconnectAndStop()
 
     def create_menu(self, root_menu):
         '''

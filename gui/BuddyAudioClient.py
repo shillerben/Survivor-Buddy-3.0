@@ -29,7 +29,7 @@ class BuddyAudioClient:
 
         self.audio_stream = None
 
-    def handleConnect(self):
+    def connect(self):
         if(self.client_socket == None):
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -45,14 +45,21 @@ class BuddyAudioClient:
         
         return True
 
-    def connect(self):
-        threading.Thread(target=self.handleConnect).start()
+    def connectAndStart(self):
+        threading.Thread(target=self.handleConnectAndStart).start()
 
-    def disconnect(self):
+    def handleConnectAndStart(self):
+        if(self.connect()):
+            self.startStream()
+
+        
+
+    def disconnectAndStop(self):
+        self.continue_stream = False
         self.client_socket.close()
         self.client_socket = None
 
-    def handleStream(self):
+    def startStream(self):
         
         self.audio_stream = self.audio_handler.open(
             format=self.audio_handler.get_format_from_width(self.width),
@@ -71,12 +78,6 @@ class BuddyAudioClient:
                 break
             else:
                 self.client_socket.sendall(audio_data)
-
-    def startStream(self):
-        threading.Thread(target=self.handleStream).start()
-
-    def stopStream(self):
-        self.continue_stream = False
 
     def setInputDevice(self):
         pass
