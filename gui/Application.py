@@ -81,7 +81,6 @@ class Application(tk.Frame):
 
         self.mbac = BuddyAudioClient(host, port)
 
-
         self.bmc = BuddyMessageClient(host, port, self.master)
         # textbox = ttk.Label(root, text="text")
         # textbox.place(x=800, y=300)

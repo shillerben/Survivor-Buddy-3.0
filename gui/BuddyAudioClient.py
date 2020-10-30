@@ -1,6 +1,7 @@
 import pyaudio
 import socket
 import threading
+import copy
 
 class BuddyAudioClient:
 
@@ -16,6 +17,7 @@ class BuddyAudioClient:
         self.server_addr = (self.server_ip, self.port_num)
         self.client_socket = None
         self.continue_stream = None
+        self.connectedBool = False
 
         self.audio_handler = pyaudio.PyAudio()
         self.device_api_info = self.audio_handler.get_default_host_api_info()
@@ -28,6 +30,10 @@ class BuddyAudioClient:
         self.chunk_size = self.default_chunk_size
 
         self.audio_stream = None
+
+
+        self.input_device_list = None
+
 
     def connect(self):
         if(self.client_socket == None):
@@ -46,18 +52,20 @@ class BuddyAudioClient:
         return True
 
     def connectAndStart(self):
-        threading.Thread(target=self.handleConnectAndStart).start()
+        if(not self.connectedBool):
+            threading.Thread(target=self.handleConnectAndStart).start()
 
     def handleConnectAndStart(self):
         if(self.connect()):
+            self.connectedBool = True
             self.startStream()
-
-        
 
     def disconnectAndStop(self):
         self.continue_stream = False
-        self.client_socket.close()
+        if(self.client_socket is not None):
+            self.client_socket.close()
         self.client_socket = None
+        self.connectedBool = False
 
     def startStream(self):
         
@@ -66,7 +74,8 @@ class BuddyAudioClient:
             channels=self.num_input_channels,
             rate=self.sampling_rate,
             input=True,
-            frames_per_buffer=self.chunk_size
+            frames_per_buffer=self.chunk_size,
+            input_device_index=self.input_device_index
         )
 
         self.continue_stream = True
@@ -79,6 +88,47 @@ class BuddyAudioClient:
             else:
                 self.client_socket.sendall(audio_data)
 
-    def setInputDevice(self):
-        pass
+    def getInputDeviceNames(self):
+        #returns a list[str] of input device names
+        device_name_list = []
+        for mdict in self.getInputDeviceDicts():
+            device_name_list.append(mdict['name'])
+
+        return device_name_list
+
+    def getInputDeviceDicts(self):
+        dict_list = []
+        device_count = self.device_api_info['deviceCount']
+        host_api_index = self.device_api_info['index']
+
+        for device_index in range(0, device_count):
+            device_dict = self.audio_handler.get_device_info_by_host_api_device_index(
+                host_api_index,
+                device_index
+            )
+            if(device_dict['maxInputChannels'] >= 1):
+                dict_list.append(copy.deepcopy(device_dict))
+
+        return dict_list
+
+    def setInputDevice(self, device_name):
+
+        device_dicts = self.getInputDeviceDicts()
+        chosen_dict = None
+
+        for d in device_dicts:
+            if(d['name'] == device_name):
+                chosen_dict = d
+                break
+
+        if(chosen_dict == None):
+            print("ERROR: Device not found")
+
+        self.input_device_index = chosen_dict['index']
+
+        
+            
+
+            
+
 
