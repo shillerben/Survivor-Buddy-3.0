@@ -15,6 +15,7 @@ import os.path
 import webbrowser
 import subprocess
 from BuddyAudioClient import BuddyAudioClient
+from functools import *
 
 import threading
 # import appscript  # added this
@@ -243,7 +244,7 @@ class Application(tk.Frame):
         #Audio Devices
         self.audio_devices_menu = tk.Menu(root_menu, tearoff=0)
         for device in self.device_arr:
-            self.audio_devices_menu.add_command(label=device, command=lambda: self.change_audio(device))
+            self.audio_devices_menu.add_command(label=device, command=partial(self.change_audio, device))
         root_menu.add_cascade(label="Audio Devices", menu=self.audio_devices_menu)
 
     def refresh_devices(self):
