@@ -85,7 +85,7 @@ class PositionUpdater(Thread):
 class LabelScaleSpinbox(tk.Frame):
     '''A custom class to combine Tk Scale and Spinbox and keep them in sync'''
 
-    def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, up=False, down=False, left=False, right=False, top_frame=None, middle_frame=None, bottom_frame=None, root=None, **kwargs):
+    def __init__(self, master, text="", from_=0, to=10, axis=0, dev=None, up=False, down=False, left=False, right=False, top_frame=None, middle_frame=None, bottom_frame=None, root=None, _host_ip=None, **kwargs):
         '''
         Constructor for LabelScaleSpinbox
         
@@ -130,6 +130,7 @@ class LabelScaleSpinbox(tk.Frame):
         self.spinbox.pack(side="left")
 
         self.root = root
+        self.host_ip = _host_ip
 
         if up:
             self.up_button = ttk.Button(top_frame,
@@ -142,12 +143,13 @@ class LabelScaleSpinbox(tk.Frame):
             self.left_button.pack(side="left")
             # videoFrame = tk.Frame(middle_frame, height=400, width=600, bg='grey')
             # videoFrame.pack(side='left', expand=True, pady=5)
-            serverString = 'rtsp://192.168.1.5:1935/'
+            serverString = 'rtsp://' + self.host_ip + ':1935/'
+            print(serverString)
             _video = expanduser(serverString)
-            # player = Player(self.root, video=_video)
-            # player.pack(side='left', expand=True, pady=5)
-            # print("player pack")
-            # player._Play(_video)
+            player = Player(self.root, video=_video)
+            player.pack(side='left', expand=True, pady=5)
+            print("player pack")
+            player._Play(_video)
             # print("player play")
 
             self.right_button = ttk.Button(middle_frame,
@@ -387,7 +389,7 @@ class RenderDiagram(tk.Frame):
 class PositionFrame(tk.Frame):
     '''Creates the Render and Control Sliders in the GUI'''
 
-    def __init__(self, master, arm_controller, _logFile, top_frame, middle_frame, bottom_frame, root, **kwargs):
+    def __init__(self, master, arm_controller, _logFile, top_frame, middle_frame, bottom_frame, root, host_ip, **kwargs):
         '''
         Constructor for PositionFrame
         
@@ -407,6 +409,7 @@ class PositionFrame(tk.Frame):
         self.bottom_frame = bottom_frame
 
         self.root = root
+        self.host_ip = host_ip
 
         self.render_frame = tk.Frame(self)
         self.render_frame.pack(side="left")
@@ -448,15 +451,15 @@ class PositionFrame(tk.Frame):
         '''
 
         self.pitch_control = LabelScaleSpinbox(
-            master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller, up=True, down=True, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
+            master, text="Pitch: ", from_=0, to=90, axis=0, dev=self.serial_arm_controller, up=True, down=True, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root, _host_ip=self.host_ip)
         self.pitch_control.pack()
         
         self.yaw_control = LabelScaleSpinbox(
-            master, text="Yaw: ", from_=-90, to=90, axis=1, dev=self.serial_arm_controller, up=False, down=False, left=True, right = True, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
+            master, text="Yaw: ", from_=-90, to=90, axis=1, dev=self.serial_arm_controller, up=False, down=False, left=True, right = True, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root, _host_ip=self.host_ip)
         self.yaw_control.pack()
         
         self.roll_control = LabelScaleSpinbox(
-            master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller, up=False, down=False, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root)
+            master, text="Roll: ", from_=0, to=90, axis=2, dev=self.serial_arm_controller, up=False, down=False, left=False, right=False, top_frame=self.top_frame, middle_frame=self.middle_frame, bottom_frame=self.bottom_frame, root=self.root, _host_ip=self.host_ip)
         self.roll_control.pack()
 
 

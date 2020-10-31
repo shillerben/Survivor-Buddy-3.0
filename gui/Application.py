@@ -40,7 +40,7 @@ class Application(tk.Frame):
         self.master.call('wm', 'iconphoto', self.master._w, self.taskbar_icon)
         self.config(padx=16, pady=16)
 
-        host = '192.168.1.31'
+        host = '192.168.42.129'
         port = 5050
 
         self.mbac = BuddyAudioClient(host, port)
@@ -98,7 +98,7 @@ class Application(tk.Frame):
         #                          text="Move down")
         # down_button.pack(side="top")
 
-        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile, top_frame, middle_frame, bottom_frame, self.theroot)
+        self.position_frame = PositionFrame(self, self.serial_arm_controller, self.logFile, top_frame, middle_frame, bottom_frame, self.theroot, host)
         self.position_frame.pack(fill="x")
 
         self.control_buttons = ControlButtons(self, self.serial_arm_controller, self.notifications_frame)
