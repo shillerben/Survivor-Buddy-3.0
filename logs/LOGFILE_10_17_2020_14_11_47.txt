@@ -1,0 +1,12 @@
+14:11:47 - Position: P: 0 Y: 0 R: 0
+14:11:53 - Position: P: 0 Y: 0 R: 0
+14:11:55 - Position: P: 37 Y: -7 R: 0
+14:11:56 - Position: P: 47 Y: -2 R: 0
+14:11:58 - Position: P: 47 Y: -7 R: 0
+14:12:02 - Position: P: 47 Y: -6 R: 0
+14:12:03 - Position: P: 47 Y: -7 R: 0
+14:12:04 - Position: P: 47 Y: -6 R: 0
+14:12:05 - Position: P: 47 Y: -7 R: 0
+14:12:06 - Position: P: 47 Y: -6 R: 0
+14:12:07 - Position: P: 47 Y: -7 R: 0
+14:12:07 - Shutting down...

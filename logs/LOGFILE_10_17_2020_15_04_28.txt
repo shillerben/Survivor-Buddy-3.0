@@ -1,0 +1,28 @@
+15:04:29 - Position: P: 0 Y: 0 R: 0
+15:04:34 - Position: P: 0 Y: 0 R: 0
+15:04:36 - Position: P: 0 Y: -3 R: 0
+15:04:37 - Closing arm...
+15:04:37 - WARNING: ARM ALREADY CLOSED
+15:04:37 - Position: P: 0 Y: -4 R: 0
+15:04:38 - Opening arm...
+15:04:39 - Position: P: 90 Y: -7 R: 0
+15:04:42 - Position: P: 83 Y: -7 R: 0
+15:04:43 - Position: P: 76 Y: -7 R: 0
+15:04:44 - Position: P: 69 Y: -9 R: 0
+15:04:45 - Position: P: 62 Y: -7 R: 0
+15:04:46 - Position: P: 55 Y: -7 R: 0
+15:04:47 - Position: P: 48 Y: -5 R: 0
+15:04:48 - Position: P: 41 Y: -4 R: 0
+15:04:49 - Position: P: 41 Y: -6 R: 0
+15:04:50 - Position: P: 39 Y: -5 R: 0
+15:04:51 - Position: P: 32 Y: -5 R: 0
+15:04:52 - Position: P: 29 Y: -5 R: 0
+15:04:54 - Position: P: 29 Y: -8 R: 0
+15:04:55 - Position: P: 29 Y: -7 R: 0
+15:04:56 - Position: P: 29 Y: -4 R: 0
+15:04:57 - Position: P: 29 Y: -3 R: 0
+15:04:59 - Closing arm...
+15:05:00 - Position: P: 0 Y: -8 R: 0
+15:05:01 - Position: P: 0 Y: 0 R: 0
+15:05:01 - Shutting down...
+15:05:05 - Position: P: 0 Y: 0 R: 0

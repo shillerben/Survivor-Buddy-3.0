@@ -1,0 +1,4 @@
+13:32:42 - Position: P: 0 Y: 0 R: 0
+13:32:49 - Position: P: 0 Y: 0 R: 0
+13:32:50 - Shutting down...
+13:32:55 - Position: P: 0 Y: 0 R: 0

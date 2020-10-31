@@ -1,0 +1,13 @@
+14:29:08 - Position: P: 0 Y: 0 R: 0
+14:29:11 - [DISCONNECTED] Opening arm...
+14:29:19 - Position: P: 0 Y: 0 R: 0
+14:29:21 - Position: P: 16 Y: -6 R: 0
+14:29:22 - Position: P: 16 Y: -9 R: 0
+14:29:23 - Position: P: 22 Y: -7 R: 0
+14:29:26 - WARNING: DEVICE DISCONNECTED
+14:29:27 - Position: P: 22 Y: -7 R: 0
+14:30:03 - Position: P: 22 Y: -7 R: 0
+14:30:05 - Position: P: 0 Y: -5 R: 0
+14:30:08 - Position: P: 0 Y: -6 R: 0
+14:30:08 - Position: P: 0 Y: -7 R: 0
+14:30:08 - Position: P: 0 Y: -7 R: 0

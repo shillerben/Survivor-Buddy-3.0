@@ -3,3 +3,4 @@ __pycache__/
 *.swp
 v_env/
 *.vscode
+logs/
