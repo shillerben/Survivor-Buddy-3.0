@@ -2,6 +2,7 @@ import pyaudio
 import socket
 import threading
 import copy
+import time
 
 class BuddyAudioClient:
 
@@ -56,6 +57,7 @@ class BuddyAudioClient:
             threading.Thread(target=self.handleConnectAndStart).start()
 
     def handleConnectAndStart(self):
+        time.sleep(1)
         if(self.connect()):
             self.connectedBool = True
             self.startStream()
@@ -68,6 +70,8 @@ class BuddyAudioClient:
         self.connectedBool = False
 
     def startStream(self):
+
+        print(f'DEVIN: {self.input_device_index}')
         
         self.audio_stream = self.audio_handler.open(
             format=self.audio_handler.get_format_from_width(self.width),
@@ -113,6 +117,7 @@ class BuddyAudioClient:
 
     def setInputDevice(self, device_name):
 
+        print(f'NAME: {device_name}')
         device_dicts = self.getInputDeviceDicts()
         chosen_dict = None
 
