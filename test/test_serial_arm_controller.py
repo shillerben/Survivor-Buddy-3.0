@@ -106,6 +106,46 @@ class TestSerialArmControllerHappy:
         #check
         assert out_bytes == in_bytes
 
+    def test_recv_good_bytes_not_connected(self):
+        """
+        Tests recv() method of SerialArmController with preset byte data as input
+        while it is connected
+        """
+
+        #setup
+        self.reset_mocked_sar()
+        self.my_sar.is_connected = False
+
+        #test
+
+        in_bytes = bytes((3,2,1))
+        self.mock_serial.write(in_bytes)
+        out_bytes = self.my_sar.recv()
+
+        #check
+        assert out_bytes is None
+
+    def test_update_position_connected(self):
+        """
+        Tests update_position() method of SerialArmController with preset byte data as input
+        while it is connected
+        """
+
+        #setup
+        self.reset_mocked_sar()
+        self.my_sar.is_connected = True
+
+        #test
+        in_bytes = bytes((3, 100, 1))
+        self.mock_serial.write(in_bytes)
+        self.my_sar.update_position()
+
+
+        #check
+        assert self.my_sar.position.pitch == 3
+        assert self.my_sar.position.yaw == 100-90
+        assert self.my_sar.position.roll == 1
+
     def test_update_position_not_connected(self):
         """
         Tests update_position() method of SerialArmController with preset byte data as input
@@ -589,3 +629,68 @@ class TestSerialArmControllerHappy:
         assert self.my_sar.position.roll == 0
         assert self.my_sar.position.yaw == 0
         assert self.my_sar.position.pitch == 0
+
+
+class TestSerialArmControllerNegative:
+
+    mock_serial = None
+    mock_notif_frame = None
+    mock_status_bar = None
+    my_sar = None   #SerialArmController object for testing
+
+    def reset_mocked_sar(self):
+
+        self.mock_serial = MockSerial()
+        self.mock_notif_frame = MockNotificationsFrame()
+        self.mock_status_bar = MockStatusBar()
+        self.my_sar = SerialArmController(self.mock_status_bar, self.mock_notif_frame)
+        self.my_sar._device = self.mock_serial
+
+    def test_update_position_is_connected(self):
+        """
+        Tests update_position() method of SerialArmController with preset byte data as input
+        while it is connected. Uses bad byte data to check for error handling.
+        """
+
+        # setup
+        self.reset_mocked_sar()
+        self.my_sar.is_connected = True
+
+        # test
+        with pytest.raises(ValueError, match='.*'):
+            in_bytes = bytes((256, 100, 300))
+            self.mock_serial.write(in_bytes)
+            self.my_sar.update_position()
+
+    def test_send_good_bytes_connected(self):
+        """
+        Tests send() method of SerialArmController with preset byte data as input
+        while it is connected. Uses bad byte data to check for error handling.
+        """
+
+        #setup
+        self.reset_mocked_sar()
+        self.my_sar.is_connected = True
+
+        #test
+        with pytest.raises(ValueError, match='.*'):
+            in_bytes = bytes((360,1,2,3))
+            self.my_sar.send(in_bytes)
+            out_bytes = self.mock_serial.read(in_bytes.__len__())
+
+    def test_recv_good_bytes_connected(self):
+        """
+        Tests recv() method of SerialArmController with preset byte data as input
+        while it is connected. Uses bad byte data to check for error handling.
+        """
+
+        #setup
+        self.reset_mocked_sar()
+        self.my_sar.is_connected = True
+
+        #test
+        with pytest.raises(ValueError, match='.*'):
+            in_bytes = bytes((360,2,1))
+            self.mock_serial.write(in_bytes)
+            out_bytes = self.my_sar.recv()
+

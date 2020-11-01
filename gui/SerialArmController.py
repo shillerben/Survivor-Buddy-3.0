@@ -134,7 +134,7 @@ class SerialArmController:
             self.position.pitch = int(pos[0])
             self.position.yaw = int(pos[1] - 90)
             self.position.roll = int(pos[2])
-            #print("pitch: ", self.position.pitch)
+            print("pitch: ", self.position.pitch)
 
 
 
