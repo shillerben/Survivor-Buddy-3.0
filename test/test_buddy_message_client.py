@@ -3,7 +3,7 @@ import pytest
 from gui.BuddyMessageClient import BuddyMessageClient
 
 
-class TestBuddyAudioClientPositive:
+class TestBuddyMessageClientPositive:
 
     def test_foo(self):
         assert True
