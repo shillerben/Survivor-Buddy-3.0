@@ -1,6 +1,6 @@
 
 import io
-
+from gui.SerialArmController import Position
 
 class MockSerial:
     def __init__(self):
@@ -47,5 +47,43 @@ class MockStatusBar:
 
     def get_status(self):
         return self.status
+
+class MockSerialArmController:
+    def __init__(self):
+        self.is_connected = False
+        self.open_arm_bool = False
+        self.close_arm_bool = False
+        self.portrait_bool = False
+        self.landscape_bool = False
+        self.tilt_bool = False
+        self.nod_bool = False
+        self.shake_bool = False
+        self.shutdown_bool = False
+
+    def open_arm(self):
+        self.open_arm_bool = True
+
+    def close_arm(self):
+        self.close_arm_bool = True
+
+    def portrait(self):
+        self.portrait_bool = True
+
+    def landscape(self):
+        self.landscape_bool = True
+
+    def tilt(self):
+        self.tilt_bool = True
+
+    def nod(self):
+        self.nod_bool = True
+
+    def shake(self):
+        self.shake_bool = True
+
+    def _shutdown(self):
+        self.shutdown_bool = True
+
+
 
 
