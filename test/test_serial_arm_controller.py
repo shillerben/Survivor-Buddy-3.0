@@ -141,8 +141,9 @@ class TestSerialArmControllerPositive:
 
         #test
         self.my_sar.set_pitch(input_val)
-
         out_bytes = self.mock_serial.read(2)
+
+        #check
         assert int(out_bytes[0]) == Command.PITCH
         assert int(out_bytes[1]) == input_val
 
