@@ -2,25 +2,6 @@ import pytest
 from Mock import MockSerial, MockNotificationsFrame, MockStatusBar
 from gui.SerialArmController import SerialArmController, Command, Position
 
-"""
-self.mock_serial = None
-self.mock_notif_frame = None
-self.mock_status_bar = None
-self.my_sar = None
-
-def self.reset_mocked_sar():
-    global self.mock_serial
-    global self.mock_notif_frame
-    global self.mock_status_bar
-    global self.my_sar
-    
-    self.mock_serial = MockSerial()
-    self.mock_notif_frame = MockNotificationsFrame()
-    self.mock_status_bar = MockStatusBar()
-    self.my_sar = SerialArmController(self.mock_status_bar, self.mock_notif_frame)
-    self.my_sar._device = self.mock_serial
-"""
-
 class TestSerialArmControllerPositive:
 
     mock_serial = None
