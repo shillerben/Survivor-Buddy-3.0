@@ -1,5 +1,7 @@
 
 import io
+import threading
+import socket
 
 
 class MockSerial:
@@ -48,4 +50,76 @@ class MockStatusBar:
     def get_status(self):
         return self.status
 
+class MockAudioServer:
 
+    def __init__(self):
+        pass
+
+class MockMessageServer:
+
+    def __init__(self, ip, port, str_format):
+        
+        self.recent_msg = None
+        self.server = None
+        self.ip = ip
+        self.port = port
+        self.addr = (self.ip, self.port)
+        self.str_format = str_format
+        self.client_conn = None
+        self.restart_bool = False
+
+        self.str_lock = threading.Lock()
+        self.start_lock = threading.Lock()
+
+        self.run_thread = None
+
+
+    def start_server(self):
+        self.restart_bool = True
+        self.start_lock.acquire()
+        self.run_thread = threading.Thread(target=self.handle_start_server)
+        self.run_thread.start()
+
+    def handle_start_server(self):
+        
+        while(self.restart_bool):
+
+            try:
+                self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.server.bind(self.addr)
+                self.start_lock.release()
+
+                self.server.listen()
+                self.client_conn, addr = self.server.accept()
+
+                msg = self.client_conn.recv(2048).decode(self.str_format).strip()
+                self.str_lock.acquire()
+                self.recent_msg = msg
+                self.str_lock.release()
+            
+            except KeyboardInterrupt:
+                break
+            except ConnectionAbortedError:
+                break
+            except OSError:
+                break
+
+    def stop_server(self):
+        self.restart_bool = False
+        self.start_lock.acquire()
+        if(self.client_conn is not None):
+            self.client_conn.close()
+        if(self.server is not None):
+            self.server.close()
+        self.start_lock.release()
+
+        if(self.run_thread is not None):
+            self.run_thread.join()
+            self.run_thread = None
+        
+
+    def get_recent_msg(self):
+        self.str_lock.acquire()
+        r = self.recent_msg
+        self.str_lock.release()
+        return r
