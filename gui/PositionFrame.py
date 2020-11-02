@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from threading import Thread
 from datetime import datetime
-from tkvlc import Player
+from .tkvlc import Player
 from os.path import expanduser
 import time
 import queue
