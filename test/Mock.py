@@ -87,6 +87,12 @@ class MockSerialArmController:
         self.shutdown_bool = True
 
 
+class MockLogFile():
+    def __init__(self):
+        self.arr = []
+
+    def write(self, text):
+        self.arr.append(text)
 
 class MockAudioServer:
     def __init__(self):
