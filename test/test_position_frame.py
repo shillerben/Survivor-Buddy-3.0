@@ -1,6 +1,6 @@
 import pytest
 from Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockLogFile, MockSerialArmController, MockSpinBox, MockSlider
-from gui.tkvlc import Player
+import gui.tkvlc
 from gui.PositionFrame import LabelScaleSpinbox
 
 import tkinter as tk
