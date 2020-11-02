@@ -198,7 +198,7 @@ class TestNotificationsFrameHappy:
     @pytest.mark.parametrize("input_val", [0, 5, 7])
     def test_validate_spinbox_positive(self, input_val):
         """
-        Tests validate_spinbox() method of LabelScaleSpinBox
+        Tests validate_spinbox() method of LabelScaleSpinBox with values that will work
         """
 
         # setup
@@ -213,7 +213,7 @@ class TestNotificationsFrameHappy:
     @pytest.mark.parametrize("input_val", [-5, 20, 90])
     def test_validate_spinbox_negative(self, input_val):
         """
-        Tests validate_spinbox() method of LabelScaleSpinBox
+        Tests validate_spinbox() method of LabelScaleSpinBox with values that won't work
         """
 
         # setup
