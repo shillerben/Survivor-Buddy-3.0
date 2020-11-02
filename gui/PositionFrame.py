@@ -10,11 +10,9 @@ import numpy as np
 from threading import Thread
 from datetime import datetime
 from tkvlc import Player
-from tkvlc import _Tk_Menu
 from os.path import expanduser
 import time
 import queue
-import Application
 
 class PositionUpdater(Thread):
     '''Updates UI elements based on arm position'''

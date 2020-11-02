@@ -94,6 +94,27 @@ class MockLogFile():
     def write(self, text):
         self.arr.append(text)
 
+class MockSpinBox():
+    def __init__(self):
+        self.val = 0
+
+    def get(self):
+        return self.val
+
+    def set(self, val):
+        self.val = val
+
+
+class MockSlider():
+    def __init__(self):
+        self.val = 0
+
+    def get(self):
+        return self.val
+
+    def set(self, val):
+        self.val = val
+
 class MockAudioServer:
     def __init__(self):
         pass

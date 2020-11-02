@@ -23,7 +23,7 @@ Requires Python 3.4 or later.
 Author: Patrick Fay
 Date: 23-09-2015
 """
-
+#https://github.com/oaubert/python-vlc/blob/master/examples/tkvlc.py
 # Tested with Python 3.7.4, tkinter/Tk 8.6.9 on macOS 10.13.6 only.
 __version__ = '20.05.04'  # mrJean1 at Gmail
 
