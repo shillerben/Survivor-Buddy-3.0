@@ -61,6 +61,9 @@ class MockSerialArmController:
         self.nod_bool = False
         self.shake_bool = False
         self.shutdown_bool = False
+        self.pitch = 0
+        self.yaw = 0
+        self.roll = 0
 
     def open_arm(self):
         self.open_arm_bool = True
@@ -86,6 +89,16 @@ class MockSerialArmController:
     def _shutdown(self):
         self.shutdown_bool = True
 
+    def set_pitch(self, val):
+        self.pitch = val
+
+    def set_yaw(self, val):
+        self.yaw = val
+
+    def set_roll(self, val):
+        self.roll = val
+
+
 
 class MockLogFile():
     def __init__(self):
@@ -95,8 +108,8 @@ class MockLogFile():
         self.arr.append(text)
 
 class MockSpinBox():
-    def __init__(self):
-        self.val = 0
+    def __init__(self, val=0):
+        self.val = val
 
     def get(self):
         return self.val
@@ -106,8 +119,8 @@ class MockSpinBox():
 
 
 class MockSlider():
-    def __init__(self):
-        self.val = 0
+    def __init__(self, val=0):
+        self.val = val
 
     def get(self):
         return self.val
