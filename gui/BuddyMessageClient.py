@@ -14,30 +14,29 @@ class BuddyMessageClient:
         self.client_socket = None
         self.master = master
 
-    def connect(self, text):
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            self.client_socket.connect(self.full_addr)
-        except ConnectionRefusedError:
-            newWindow=Toplevel(self.master)
-            newWindow.geometry("600x50")
-            newWindow.title("Error Message")
-            label = Label(newWindow, text= 'Your text: "'+ text+ '" could not sent\nError Message: Please open Show Messages in Survivor Buddy Mobile App')
-            label.pack()
-            print("Could not send message: Please open Show Messages in Survivor Buddy Mobile App")
-            return False
-
-        except TimeoutError:
+    def show_error(self, error_msg):
+        if(self.master is not None):
             newWindow = Toplevel(self.master)
             newWindow.geometry("600x50")
             newWindow.title("Error Message")
-            label = Label(newWindow, text='Your text: "'+ text+ '" could not sent\nError Message: Ensure that the ip address and port number are correct')
+            label = Label(newWindow, text= error_msg)
             label.pack()
-            print("Connection to Mobile Device Timed out: Ensure that the ip address and port number are correct")
+
+    def connect(self, text="DEFAULT_MESSAGE"):
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.client_socket.connect(self.full_addr)
+            return True
+
+        except ConnectionRefusedError:
+            self.show_error("Error Message: Connection Refused")
             return False
 
-        return True
-        
+        except TimeoutError:
+            self.show_error("Error Message: Connection TimedOut")
+            return False
+
+        return None
 
     def disconnect(self):
         self.client_socket.close()
@@ -49,8 +48,3 @@ class BuddyMessageClient:
         if self.connect(msg_str):
             self.client_socket.sendall(msg_str.encode(self.str_format))
             self.disconnect()
-
-
-
-
-
