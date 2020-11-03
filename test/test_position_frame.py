@@ -6,7 +6,7 @@ from gui.PositionFrame import LabelScaleSpinbox
 import tkinter as tk
 
 
-class TestNotificationsFrameHappy:
+class TestLabelScaleSpinboxHappy:
 
     mock_serial = None
     mock_notif_frame = None

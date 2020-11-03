@@ -1,124 +1,175 @@
 import pytest
-import time
-import contextlib
+from pytest_mock import mocker
 
 from gui.BuddyMessageClient import BuddyMessageClient
-from Mock import MockMessageServer
 
 class DefaultValues:
     port = 5050
     ip = 'localhost'
+    master = None
     format = 'utf-8'
 
-class BaseBuddyMessageTestClass:
-    bmc = None  # bmc=buddy message client
-    mock_bms = None  # bms=buddy message server
+class TestBuddyMessageClientHappy():
 
-    def reset_client(
-        self,
-        ip=DefaultValues.ip,
-        port=DefaultValues.port,
-        str_format=DefaultValues.format
-    ):
-        self.bmc = BuddyMessageClient(ip, port, None, str_format=str_format)
-
-    @contextlib.contextmanager
-    def run_mock_server(
-        self,
-        ip=DefaultValues.ip,
-        port=DefaultValues.port,
-        _format=DefaultValues.format
-    ):
-        self.mock_bms = MockMessageServer(ip, port, _format)
-        self.mock_bms.start_server()
-        yield
-        self.mock_bms.stop_server()
-        self.mock_bms = None
-
-class TestBuddyMessageClientHappy(BaseBuddyMessageTestClass):
-
-    def test_connect_server_running(self):
+    def test_connect_server_running(self, mocker):
         '''
         Tests that connect returns true when the server is running
         '''
 
         #setup
-        self.reset_client()
-        #run
-        with self.run_mock_server():
-            assert self.bmc.connect() == True
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
 
-    def test_connect_server_not_running(self):
+        #run
+        bmc.connect()
+
+        #check
+        mock_socket.return_value.connect.assert_called_with(bmc.full_addr)
+
+    def test_connect_server_not_running(self, mocker):
         '''
         Tests that connect returns False when the server is not running
         '''
 
         #setup
-        self.reset_client()
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+        mock_socket.return_value.connect.side_effect = TimeoutError
+
         #run
-        assert self.bmc.connect() == False
+        connect_return = bmc.connect()
+
+        #check
+        mock_socket.return_value.connect.assert_called_with(bmc.full_addr)
+        assert connect_return == False
+
+    def test_disconnect_connected(self, mocker):
+        '''
+        Tests that diconnect calls socket.close when it is connected\
+        '''
+
+        #setup
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+
+        bmc.client_socket = mock_socket.return_value
+        #run
+        bmc.disconnect()
+
+        #check
+        mock_socket.return_value.close.assert_called()
+        assert bmc.client_socket is None
+
 
     @pytest.mark.parametrize("input_val", ['hello', 'goodbye', '12345'])
-    def test_handle_send_server_running(self, input_val):
+    def test_handle_send_server_running(self, mocker, input_val):
         '''
         Tests handleSend() method with some preset data and checks that
         it matches when read on the server
         '''
 
-        self.reset_client()
+        #setup
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
 
-        with self.run_mock_server():
-            self.bmc.handleSend(input_val)
-            time.sleep(0.1) #allows time for the socket IO to happen
-            assert self.mock_bms.get_recent_msg() == input_val
+        #run
+        bmc.handleSend(input_val)
 
-    def test_handle_send_server_not_running(self):
+        #check
+        encode_input = input_val.encode(bmc.str_format)
+        mock_socket.return_value.sendall.assert_called_with(encode_input)
+
+    def test_handle_send_server_not_running(self, mocker):
         '''
         Tests handleSend() method with some preset data. This should
         not send anything to the server as it is not running.
         '''
 
-        self.reset_client()
-        mock_server = MockMessageServer(
-            DefaultValues.ip,
-            DefaultValues.port,
-            DefaultValues.format
-        )
+        #setup
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+        mock_socket.return_value.connect.side_effect = TimeoutError
 
-        self.bmc.handleSend("hello")
-        assert mock_server.get_recent_msg() is None
+        #run
+        bmc.handleSend("hello")
+
+        #check
+        mock_socket.return_value.sendall.assert_not_called()
 
 
-class TestBuddyMessageClientNegative(BaseBuddyMessageTestClass):
+class TestBuddyMessageClientNegative():
 
-    def test_wrong_ip_address(self):
+    def test_wrong_ip_address_only(self, mocker):
         '''
         Tests the error handling of the connect() method for when a bad ip 
         is provided to the client
         '''
 
-        self.reset_client(ip='192.168.0.1')
-        with self.run_mock_server():
-            assert self.bmc.connect() == False
+        ip_addr = '192.168.0.1'
+        #setup
+        bmc = BuddyMessageClient(ip_addr, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+        mock_socket.return_value.connect.side_effect = TimeoutError
 
-    def test_wrong_port(self):
+        #run
+        connect_return = bmc.connect()
+
+        #check
+        assert connect_return == False
+        mock_socket.return_value.connect.assert_called_with((ip_addr, DefaultValues.port))
+        
+
+
+    def test_wrong_port_only(self, mocker):
         '''
         Tests the error handling of the connect() method for when a bad port 
         is provided to the client
         '''
 
-        self.reset_client(port=9999)
-        with self.run_mock_server():
-            assert self.bmc.connect() == False
+        port_num = 9999
+        #setup
+        bmc = BuddyMessageClient(DefaultValues.ip, port_num, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+        mock_socket.return_value.connect.side_effect = TimeoutError
 
-    def test_wrong_ip_address_and_port(self):
+        #run
+        connect_return = bmc.connect()
+
+        #check
+        assert connect_return == False
+        mock_socket.return_value.connect.assert_called_with((DefaultValues.ip, port_num))
+
+    def test_wrong_ip_address_and_port(self, mocker):
         '''
         Tests the error handling of the connect() method for when a bad ip 
         and port is provided to the client
         '''
+        ip_addr = '192.168.0.1'
+        port_num = 9999
+        #setup
+        bmc = BuddyMessageClient(ip_addr, port_num, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+        mock_socket.return_value.connect.side_effect = TimeoutError
 
-        self.reset_client(ip='192.168.0.1', port=9999)
-        with self.run_mock_server():
-            assert self.bmc.connect() == False
+        #run
+        connect_return = bmc.connect()
 
+        #check
+        assert connect_return == False
+        mock_socket.return_value.connect.assert_called_with((ip_addr, port_num))
+
+    def test_disconnect_not_connected(self, mocker):
+        '''
+        Tests that disconnect() method does not do anything if the socket is not connected
+        '''
+
+        #setup
+        bmc = BuddyMessageClient(DefaultValues.ip, DefaultValues.port, DefaultValues.master)
+        mock_socket = mocker.patch('socket.socket', autospec=True)
+
+        #run
+        bmc.disconnect()
+
+        #check
+        mock_socket.return_value.close.assert_not_called()
 
