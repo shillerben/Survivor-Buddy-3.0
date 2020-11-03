@@ -39,7 +39,9 @@ class BuddyMessageClient:
         return None
 
     def disconnect(self):
-        self.client_socket.close()
+        if(self.client_socket is not None):
+            self.client_socket.close()
+            self.client_socket = None
 
     def sendMsg(self, msg_str):
         threading.Thread(target=self.handleSend, args=(msg_str,)).start()

@@ -1,5 +1,5 @@
 from gui import SerialArmController
-from Mock import *
+from .Mock import *
 
 
 def fun():

@@ -1,5 +1,5 @@
 import pytest
-from Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockLogFile
+from .Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockLogFile
 from gui.NotificationsFrame import NotificationFrame
 import tkinter as tk
 from datetime import datetime

@@ -1,5 +1,5 @@
 import pytest
-from Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockLogFile, MockSerialArmController, MockSpinBox, MockSlider
+from .Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockLogFile, MockSerialArmController, MockSpinBox, MockSlider
 import gui.tkvlc
 from gui.PositionFrame import LabelScaleSpinbox
 

@@ -1,5 +1,5 @@
 import pytest
-from Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockSerialArmController
+from .Mock import MockSerial, MockNotificationsFrame, MockStatusBar, MockSerialArmController
 from gui.ControlButtons import ControlButtons
 import tkinter as tk
 class TestControlButtonsHappy:

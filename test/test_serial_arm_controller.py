@@ -1,5 +1,5 @@
 import pytest
-from Mock import MockSerial, MockNotificationsFrame, MockStatusBar
+from .Mock import MockSerial, MockNotificationsFrame, MockStatusBar
 from gui.SerialArmController import SerialArmController, Command, Position
 
 class TestSerialArmControllerHappy:

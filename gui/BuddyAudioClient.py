@@ -60,16 +60,17 @@ class BuddyAudioClient:
         time.sleep(1)
         if(self.connect()):
             self.connectedBool = True
-            self.startStream()
+            self.start_stream()
 
     def disconnectAndStop(self):
         self.continue_stream = False
+        print(self.client_socket)
         if(self.client_socket is not None):
             self.client_socket.close()
         self.client_socket = None
         self.connectedBool = False
 
-    def startStream(self):
+    def start_stream(self):
 
         print(f'DEVIN: {self.input_device_index}')
         
@@ -84,13 +85,19 @@ class BuddyAudioClient:
 
         self.continue_stream = True
         while self.continue_stream:
-            audio_data = self.audio_stream.read(self.chunk_size)
-            if(self.client_socket is None):
-                break
-            elif(self.client_socket._closed):
-                break
-            else:
-                self.client_socket.sendall(audio_data)
+            self.stream_loop()
+
+
+    def stream_loop(self):
+        audio_data = self.audio_stream.read(self.chunk_size)
+        print(audio_data)
+        if(self.client_socket is None):
+            self.continue_stream = False
+        elif(self.client_socket._closed):
+            self.continue_stream = False
+        else:
+            self.client_socket.sendall(audio_data)
+    
 
     def getInputDeviceNames(self):
         #returns a list[str] of input device names
@@ -102,6 +109,7 @@ class BuddyAudioClient:
 
     def getInputDeviceDicts(self):
         dict_list = []
+        #TODO: May need to set device count dynamically here
         device_count = self.device_api_info['deviceCount']
         host_api_index = self.device_api_info['index']
 
@@ -128,5 +136,5 @@ class BuddyAudioClient:
 
         if(chosen_dict == None):
             print("ERROR: Device not found")
-
-        self.input_device_index = chosen_dict['index']
+        else:
+            self.input_device_index = chosen_dict['index']
