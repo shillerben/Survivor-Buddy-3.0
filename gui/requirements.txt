@@ -17,7 +17,7 @@ matplotlib==3.2.1
 mccabe==0.6.1
 numpy==1.18.2
 packaging==20.3
-Pygments==2.6.1
+Pygments==2.7.4
 pylint==2.4.4
 pyparsing==2.4.7
 pyserial==3.4
